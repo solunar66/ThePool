@@ -8,10 +8,10 @@ namespace ThePool
 {
     public struct Partner
     {
-        string name;
-        string telephone;
-        string comment;
-
+        public string name;
+        public string telephone;
+        public string comment;
+        public ArrayList funds;
     }
 
     public enum Cycle
@@ -25,24 +25,25 @@ namespace ThePool
     
     public struct Fund
     {
-        int volume;
-        float rate;
-        Cycle cycle;
-        DateTime start;
-        DateTime end;
-        string comment;
+        public int volume;
+        public float rate;
+        public Cycle cycle;
+        public DateTime start;
+        public DateTime end;
+        public string comment;
     }
 
     public struct Project
     {
-        string name;
-        string contact;
-        string telephone;
-        int volume;
-        float rate;
-        Cycle cycle;
-        DateTime start;
-        DateTime end;
+        public string name;
+        public string contact;
+        public string telephone;
+        public int volume;
+        public float rate;
+        public Cycle cycle;
+        public DateTime start;
+        public DateTime end;
+        public string comment;
     }
 
     public enum FlowType
@@ -53,12 +54,12 @@ namespace ThePool
 
     public struct Calendar
     {
-        DateTime date;
-        FlowType type;
-        int volume;
-        string partner;
-        string project;
-        string comment;
+        public DateTime date;
+        public FlowType type;
+        public int volume;
+        public string partner;
+        public string project;
+        public string comment;
     }
 
     /// <summary>
@@ -68,14 +69,163 @@ namespace ThePool
     {
         private Xml() { }
 
-        public static ArrayList LoadPartner()
-        { return null; }
+        public static ArrayList LoadPartner(string file)
+        {
+            ArrayList partners = new ArrayList();
 
-        public static ArrayList LoadProject()
-        { return null; }
+            XmlDocument xml = new XmlDocument();
+            xml.Load(file);
+            XmlNode root = xml.SelectSingleNode("Partners");
 
-        public static ArrayList LoadCalendar()
-        { return null; }
+            foreach (XmlNode partner in root.ChildNodes)
+            {
+                Partner par = new Partner();
+                par.name = partner.Attributes["name"].Value;
+                par.telephone = partner.Attributes["telephone"].Value;
+                par.comment = partner.Attributes["comment"].Value;
+                par.funds = new ArrayList();
+                foreach (XmlNode fund in partner.ChildNodes)
+                {
+                    Fund f = new Fund();
+                    f.volume = int.Parse(fund.Attributes["volume"].Value);
+                    f.rate = float.Parse(fund.Attributes["rate"].Value);
+                    f.cycle = (Cycle)Enum.ToObject(typeof(Cycle), byte.Parse(fund.Attributes["cycle"].Value));
+                    f.start = DateTime.Parse(fund.Attributes["start"].Value);
+                    f.end = DateTime.Parse(fund.Attributes["end"].Value);
+                    f.comment = fund.Attributes["comment"].Value;
+                    par.funds.Add(f);
+                }
+                partners.Add(par);
+            }
+
+            return partners;
+        }
+
+        public static void UpdatePartner(string file, ArrayList partners)
+        {
+            XmlDocument xml = new XmlDocument();
+            xml.Load(file);
+            XmlNode root = xml.SelectSingleNode("Partners");
+            root.RemoveAll();
+
+            foreach (Partner partner in partners)
+            {
+                XmlNode par = AppendElement(root, "partner");
+                SetAttribute(par, "name", partner.name);
+                SetAttribute(par, "telephone", partner.telephone);
+                SetAttribute(par, "comment", partner.comment);
+                foreach (Fund fund in partner.funds)
+                {
+                    XmlNode f = AppendElement(par, "fund");
+                    SetAttribute(f, "volume", fund.volume.ToString());
+                    SetAttribute(f, "rate", fund.rate.ToString());
+                    SetAttribute(f, "cycle", ((int)fund.cycle).ToString());
+                    SetAttribute(f, "start", fund.start.ToShortDateString());
+                    SetAttribute(f, "end", fund.end.ToShortDateString());
+                    SetAttribute(f, "comment", fund.comment);
+                }
+            }
+
+            xml.Save(file);
+        }
+
+        public static void DeletePartner(string file, string name)
+        {
+            XmlDocument xml = new XmlDocument();
+            xml.Load(file);
+            XmlNode root = xml.SelectSingleNode("Partners");
+
+            foreach (XmlNode partner in root.ChildNodes)
+            {
+                if (partner.Attributes["name"].Value == name)
+                {
+                    root.RemoveChild(partner);
+                    break;
+                }
+            }
+
+            xml.Save(file);
+        }
+
+        public static ArrayList LoadProject(string file)
+        {
+            ArrayList projects = new ArrayList();
+
+            XmlDocument xml = new XmlDocument();
+            xml.Load(file);
+            XmlNode root = xml.SelectSingleNode("Projects");
+
+            foreach (XmlNode project in root.ChildNodes)
+            {
+                Project proj = new Project();
+                proj.name = project.Attributes["name"].Value;
+                proj.contact = project.Attributes["contact"].Value;
+                proj.telephone = project.Attributes["telephone"].Value;
+                proj.volume = int.Parse(project.Attributes["volume"].Value);
+                proj.rate = float.Parse(project.Attributes["rate"].Value);
+                proj.cycle = (Cycle)(Enum.ToObject(typeof(Cycle), byte.Parse(project.Attributes["cycle"].Value)));
+                proj.start = DateTime.Parse(project.Attributes["start"].Value);
+                proj.end = DateTime.Parse(project.Attributes["end"].Value);
+                proj.comment = project.Attributes["comment"].Value;
+                projects.Add(proj);
+            }
+
+            return projects;
+        }
+
+        public static void UpdateProject(string file, ArrayList projects)
+        {
+            XmlDocument xml = new XmlDocument();
+            xml.Load(file);
+            XmlNode root = xml.SelectSingleNode("Projects");
+            root.RemoveAll();
+
+            foreach (Project project in projects)
+            {
+                XmlNode proj = AppendElement(root, "project");
+                SetAttribute(proj, "name", project.name);
+                SetAttribute(proj, "contact", project.contact);
+                SetAttribute(proj, "telephone", project.telephone);
+                SetAttribute(proj, "volume", project.volume.ToString());
+                SetAttribute(proj, "rate", project.rate.ToString());
+                SetAttribute(proj, "cycle", ((int)project.cycle).ToString());
+                SetAttribute(proj, "start", project.start.ToShortDateString());
+                SetAttribute(proj, "end", project.end.ToShortDateString());
+                SetAttribute(proj, "comment", project.comment);
+            }
+
+            xml.Save(file);
+        }
+
+        public static void DeleteProject(string file, string name)
+        {
+            XmlDocument xml = new XmlDocument();
+            xml.Load(file);
+            XmlNode root = xml.SelectSingleNode("Projects");
+
+            foreach (XmlNode project in root.ChildNodes)
+            {
+                if (project.Attributes["name"].Value == name)
+                {
+                    root.RemoveChild(project);
+                    break;
+                }
+            }
+
+            xml.Save(file);
+        }
+
+        public static ArrayList LoadCalendar(string file)
+        {
+            ArrayList calendars = new ArrayList();
+
+
+
+            return calendars;
+        }
+
+        public static void UpdateCalendar(string file, ArrayList calendars)
+        { }
 
         /// <summary>
         /// 创建节点

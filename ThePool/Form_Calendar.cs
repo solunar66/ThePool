@@ -37,6 +37,8 @@ namespace ThePool
         private void dateControl_MouseDown(object sender, MouseEventArgs e)
         {
             groupBox_info.Text = dateControl.CurrentDateTime.ToShortDateString();
+
+            // find and display the info of the day
         }
 
         private void ToolStripMenuItem_delete_Click(object sender, EventArgs e)

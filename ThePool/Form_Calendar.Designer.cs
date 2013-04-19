@@ -46,13 +46,13 @@
             // groupBox_info
             // 
             this.groupBox_info.Controls.Add(this.dataGridView_info);
-            this.groupBox_info.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            this.groupBox_info.Location = new System.Drawing.Point(12, 197);
+            this.groupBox_info.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.groupBox_info.Location = new System.Drawing.Point(12, 193);
             this.groupBox_info.Name = "groupBox_info";
-            this.groupBox_info.Size = new System.Drawing.Size(370, 230);
+            this.groupBox_info.Size = new System.Drawing.Size(370, 201);
             this.groupBox_info.TabIndex = 0;
             this.groupBox_info.TabStop = false;
-            this.groupBox_info.Text = "date";
+            this.groupBox_info.Text = "请选择日期";
             // 
             // dataGridView_info
             // 
@@ -64,9 +64,10 @@
             this.dataGridView_info.ContextMenuStrip = this.contextMenuStrip1;
             this.dataGridView_info.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView_info.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.dataGridView_info.Location = new System.Drawing.Point(3, 16);
+            this.dataGridView_info.Location = new System.Drawing.Point(3, 17);
             this.dataGridView_info.Name = "dataGridView_info";
-            this.dataGridView_info.Size = new System.Drawing.Size(364, 211);
+            this.dataGridView_info.RowTemplate.Height = 23;
+            this.dataGridView_info.Size = new System.Drawing.Size(364, 181);
             this.dataGridView_info.TabIndex = 0;
             this.dataGridView_info.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDown);
             // 
@@ -96,40 +97,40 @@
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ToolStripMenuItem_delete});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(147, 26);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(149, 26);
             // 
             // ToolStripMenuItem_delete
             // 
             this.ToolStripMenuItem_delete.Name = "ToolStripMenuItem_delete";
-            this.ToolStripMenuItem_delete.Size = new System.Drawing.Size(146, 22);
+            this.ToolStripMenuItem_delete.Size = new System.Drawing.Size(148, 22);
             this.ToolStripMenuItem_delete.Text = "删除当前记录";
             this.ToolStripMenuItem_delete.Click += new System.EventHandler(this.ToolStripMenuItem_delete_Click);
             // 
             // button_quit
             // 
             this.button_quit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button_quit.Location = new System.Drawing.Point(307, 436);
+            this.button_quit.Location = new System.Drawing.Point(307, 402);
             this.button_quit.Name = "button_quit";
-            this.button_quit.Size = new System.Drawing.Size(75, 23);
+            this.button_quit.Size = new System.Drawing.Size(75, 21);
             this.button_quit.TabIndex = 1;
             this.button_quit.Text = "退 出";
             this.button_quit.UseVisualStyleBackColor = true;
             // 
             // button_save
             // 
-            this.button_save.Location = new System.Drawing.Point(12, 436);
+            this.button_save.Location = new System.Drawing.Point(12, 402);
             this.button_save.Name = "button_save";
-            this.button_save.Size = new System.Drawing.Size(75, 23);
+            this.button_save.Size = new System.Drawing.Size(75, 21);
             this.button_save.TabIndex = 1;
             this.button_save.Text = "保 存";
             this.button_save.UseVisualStyleBackColor = true;
             // 
             // Form_Calendar
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button_quit;
-            this.ClientSize = new System.Drawing.Size(394, 467);
+            this.ClientSize = new System.Drawing.Size(394, 431);
             this.Controls.Add(this.button_save);
             this.Controls.Add(this.button_quit);
             this.Controls.Add(this.groupBox_info);

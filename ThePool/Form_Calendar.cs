@@ -27,6 +27,7 @@ namespace ThePool
             dateControl.ShowJieriInfo = false;
             dateControl.FontChinaDay = new Font("宋体", 7);
             dateControl.MarkDayColor = Color.LightBlue;
+            dateControl.BackColor = Color.White;
             dateControl.Date = today;
             dateControl.MouseDown += new MouseEventHandler(dateControl_MouseDown);
 

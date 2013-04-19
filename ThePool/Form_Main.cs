@@ -74,10 +74,10 @@ namespace ThePool
 
         private void Form1_SizeChanged(object sender, EventArgs e)
         {
-            panel1.Height = Height - 68;
-            button_partner.Location = new Point(0, Height - 62);
-            button_invest.Location = new Point(button_invest.Location.X, Height - 62);
-            button_quit.Location = new Point(Width - 108, Height - 62);
+            panel1.Height = Height - 82;
+            button_partner.Location = new Point(0, Height - 76);
+            button_invest.Location = new Point(button_invest.Location.X, Height - 76);
+            button_quit.Location = new Point(Width - 128, Height - 76);
         }
 
         private void button_quit_Click(object sender, EventArgs e)
@@ -210,8 +210,6 @@ namespace ThePool
                 }
                 curveIndex++;
             }
-
-
         }
     }
 }

@@ -6,14 +6,6 @@ using System.Collections.Generic;
 
 namespace ThePool
 {
-    public struct Partner
-    {
-        public string name;
-        public string telephone;
-        public string comment;
-        public ArrayList funds;
-    }
-
     public enum Cycle
     {
         undefined,
@@ -21,6 +13,12 @@ namespace ThePool
         seasonly,
         halfyearly,
         yearly
+    }
+
+    public enum FlowType
+    {
+        income,
+        payout
     }
     
     public struct Fund
@@ -31,6 +29,14 @@ namespace ThePool
         public DateTime start;
         public DateTime end;
         public string comment;
+    }
+
+    public struct Partner
+    {
+        public string name;
+        public string telephone;
+        public string comment;
+        public ArrayList funds;
     }
 
     public struct Project
@@ -46,10 +52,14 @@ namespace ThePool
         public string comment;
     }
 
-    public enum FlowType
+    public struct Debt
     {
-        income,
-        payout
+        public string name;
+        public int volume;
+        public Cycle cycle;
+        public string comment;
+        public DateTime start;
+        public DateTime end;
     }
 
     public struct Calendar
@@ -129,24 +139,6 @@ namespace ThePool
             xml.Save(file);
         }
 
-        public static void DeletePartner(string file, string name)
-        {
-            XmlDocument xml = new XmlDocument();
-            xml.Load(file);
-            XmlNode root = xml.SelectSingleNode("Partners");
-
-            foreach (XmlNode partner in root.ChildNodes)
-            {
-                if (partner.Attributes["name"].Value == name)
-                {
-                    root.RemoveChild(partner);
-                    break;
-                }
-            }
-
-            xml.Save(file);
-        }
-
         public static ArrayList LoadProject(string file)
         {
             ArrayList projects = new ArrayList();
@@ -197,19 +189,45 @@ namespace ThePool
             xml.Save(file);
         }
 
-        public static void DeleteProject(string file, string name)
+        public static ArrayList LoadDebt(string file)
+        {
+            ArrayList debts = new ArrayList();
+
+            XmlDocument xml = new XmlDocument();
+            xml.Load(file);
+            XmlNode root = xml.SelectSingleNode("Debts");
+
+            foreach (XmlNode debt in root.ChildNodes)
+            {
+                Debt d = new Debt();
+                d.name = debt.Attributes["name"].Value;
+                d.volume = int.Parse(debt.Attributes["volume"].Value);
+                d.cycle = (Cycle)(Enum.ToObject(typeof(Cycle), byte.Parse(debt.Attributes["cycle"].Value)));
+                d.start = DateTime.Parse(debt.Attributes["start"].Value);
+                d.end = DateTime.Parse(debt.Attributes["end"].Value);
+                d.comment = debt.Attributes["comment"].Value;
+                debts.Add(d);
+            }
+
+            return debts;
+        }
+
+        public static void UpdateDebt(string file, ArrayList debts)
         {
             XmlDocument xml = new XmlDocument();
             xml.Load(file);
-            XmlNode root = xml.SelectSingleNode("Projects");
+            XmlNode root = xml.SelectSingleNode("Debts");
+            root.RemoveAll();
 
-            foreach (XmlNode project in root.ChildNodes)
+            foreach (Project debt in debts)
             {
-                if (project.Attributes["name"].Value == name)
-                {
-                    root.RemoveChild(project);
-                    break;
-                }
+                XmlNode d = AppendElement(root, "debt");
+                SetAttribute(d, "name", debt.name);
+                SetAttribute(d, "volume", debt.volume.ToString());
+                SetAttribute(d, "cycle", ((int)debt.cycle).ToString());
+                SetAttribute(d, "start", debt.start.ToShortDateString());
+                SetAttribute(d, "end", debt.end.ToShortDateString());
+                SetAttribute(d, "comment", debt.comment);
             }
 
             xml.Save(file);

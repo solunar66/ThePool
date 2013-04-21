@@ -56,10 +56,11 @@
             // listBox_name
             // 
             this.listBox_name.FormattingEnabled = true;
-            this.listBox_name.Location = new System.Drawing.Point(12, 24);
+            this.listBox_name.ItemHeight = 12;
+            this.listBox_name.Location = new System.Drawing.Point(12, 22);
             this.listBox_name.Name = "listBox_name";
             this.listBox_name.ScrollAlwaysVisible = true;
-            this.listBox_name.Size = new System.Drawing.Size(100, 303);
+            this.listBox_name.Size = new System.Drawing.Size(100, 280);
             this.listBox_name.TabIndex = 0;
             // 
             // dataGridView_volume
@@ -73,10 +74,11 @@
             this.Column_start,
             this.Column_end,
             this.Column_comment});
-            this.dataGridView_volume.Location = new System.Drawing.Point(6, 126);
+            this.dataGridView_volume.Location = new System.Drawing.Point(6, 116);
             this.dataGridView_volume.MultiSelect = false;
             this.dataGridView_volume.Name = "dataGridView_volume";
-            this.dataGridView_volume.Size = new System.Drawing.Size(436, 161);
+            this.dataGridView_volume.RowTemplate.Height = 23;
+            this.dataGridView_volume.Size = new System.Drawing.Size(436, 149);
             this.dataGridView_volume.TabIndex = 1;
             this.dataGridView_volume.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dataGridView1_CellValidating);
             // 
@@ -94,16 +96,16 @@
             this.groupbox_info.Controls.Add(this.textBox_name);
             this.groupbox_info.Location = new System.Drawing.Point(159, 5);
             this.groupbox_info.Name = "groupbox_info";
-            this.groupbox_info.Size = new System.Drawing.Size(450, 322);
+            this.groupbox_info.Size = new System.Drawing.Size(450, 297);
             this.groupbox_info.TabIndex = 2;
             this.groupbox_info.TabStop = false;
             this.groupbox_info.Text = "股东信息";
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(103, 293);
+            this.button3.Location = new System.Drawing.Point(103, 270);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(91, 23);
+            this.button3.Size = new System.Drawing.Size(91, 21);
             this.button3.TabIndex = 5;
             this.button3.Text = "删除股东";
             this.button3.UseVisualStyleBackColor = true;
@@ -111,9 +113,9 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(6, 293);
+            this.button2.Location = new System.Drawing.Point(6, 270);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(91, 23);
+            this.button2.Size = new System.Drawing.Size(91, 21);
             this.button2.TabIndex = 5;
             this.button2.Text = "新建股东";
             this.button2.UseVisualStyleBackColor = true;
@@ -121,9 +123,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(351, 293);
+            this.button1.Location = new System.Drawing.Point(351, 270);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(91, 23);
+            this.button1.Size = new System.Drawing.Size(91, 21);
             this.button1.TabIndex = 5;
             this.button1.Text = "保存股东信息";
             this.button1.UseVisualStyleBackColor = true;
@@ -132,60 +134,60 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(128, 25);
+            this.label3.Location = new System.Drawing.Point(128, 23);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(55, 13);
+            this.label3.Size = new System.Drawing.Size(53, 12);
             this.label3.TabIndex = 3;
             this.label3.Text = "联系电话";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(6, 72);
+            this.label7.Location = new System.Drawing.Point(6, 66);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(31, 13);
+            this.label7.Size = new System.Drawing.Size(29, 12);
             this.label7.TabIndex = 3;
             this.label7.Text = "备注";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 25);
+            this.label1.Location = new System.Drawing.Point(6, 23);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(31, 13);
+            this.label1.Size = new System.Drawing.Size(29, 12);
             this.label1.TabIndex = 3;
             this.label1.Text = "姓名";
             // 
             // textBox_phone
             // 
-            this.textBox_phone.Location = new System.Drawing.Point(128, 44);
+            this.textBox_phone.Location = new System.Drawing.Point(128, 41);
             this.textBox_phone.MaxLength = 11;
             this.textBox_phone.Name = "textBox_phone";
-            this.textBox_phone.Size = new System.Drawing.Size(100, 20);
+            this.textBox_phone.Size = new System.Drawing.Size(100, 21);
             this.textBox_phone.TabIndex = 2;
             // 
             // textBox_comment
             // 
-            this.textBox_comment.Location = new System.Drawing.Point(6, 91);
+            this.textBox_comment.Location = new System.Drawing.Point(6, 84);
             this.textBox_comment.MaxLength = 8;
             this.textBox_comment.Name = "textBox_comment";
-            this.textBox_comment.Size = new System.Drawing.Size(436, 20);
+            this.textBox_comment.Size = new System.Drawing.Size(436, 21);
             this.textBox_comment.TabIndex = 2;
             // 
             // textBox_name
             // 
-            this.textBox_name.Location = new System.Drawing.Point(6, 44);
+            this.textBox_name.Location = new System.Drawing.Point(6, 41);
             this.textBox_name.MaxLength = 8;
             this.textBox_name.Name = "textBox_name";
-            this.textBox_name.Size = new System.Drawing.Size(100, 20);
+            this.textBox_name.Size = new System.Drawing.Size(100, 21);
             this.textBox_name.TabIndex = 2;
             // 
             // button_load
             // 
             this.button_load.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button_load.Location = new System.Drawing.Point(118, 156);
+            this.button_load.Location = new System.Drawing.Point(118, 144);
             this.button_load.Name = "button_load";
-            this.button_load.Size = new System.Drawing.Size(35, 30);
+            this.button_load.Size = new System.Drawing.Size(35, 28);
             this.button_load.TabIndex = 3;
             this.button_load.Text = ">>";
             this.button_load.UseVisualStyleBackColor = true;
@@ -194,18 +196,18 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 9);
+            this.label4.Location = new System.Drawing.Point(12, 8);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(55, 13);
+            this.label4.Size = new System.Drawing.Size(53, 12);
             this.label4.TabIndex = 3;
             this.label4.Text = "股东列表";
             // 
             // button_quit
             // 
             this.button_quit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button_quit.Location = new System.Drawing.Point(510, 333);
+            this.button_quit.Location = new System.Drawing.Point(510, 307);
             this.button_quit.Name = "button_quit";
-            this.button_quit.Size = new System.Drawing.Size(91, 23);
+            this.button_quit.Size = new System.Drawing.Size(91, 21);
             this.button_quit.TabIndex = 8;
             this.button_quit.Text = "退 出";
             this.button_quit.UseVisualStyleBackColor = true;
@@ -214,7 +216,7 @@
             // 
             this.Column_volume.HeaderText = "资金(万)";
             this.Column_volume.Name = "Column_volume";
-            this.Column_volume.Width = 75;
+            this.Column_volume.Width = 80;
             // 
             // Column_rate
             // 
@@ -256,10 +258,10 @@
             // 
             // Form_Partner
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button_quit;
-            this.ClientSize = new System.Drawing.Size(619, 360);
+            this.ClientSize = new System.Drawing.Size(619, 332);
             this.Controls.Add(this.button_quit);
             this.Controls.Add(this.button_load);
             this.Controls.Add(this.groupbox_info);

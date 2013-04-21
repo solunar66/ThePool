@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,6 +18,9 @@ namespace ThePool
         int ipt;
         object nearestObj;
         GraphPane tmpPane;
+        BarItem barInvest, barCash;
+
+        public static ArrayList partners, projects, debts, calendars;
         
         public Form_Main()
         {
@@ -28,6 +32,7 @@ namespace ThePool
             zedGraph = new ZedGraphControl();
             panel1.Controls.Add(zedGraph);
             zedGraph.Dock= DockStyle.Fill;
+            zedGraph.PanModifierKeys = Keys.None;
             zedGraph.MouseMove += new MouseEventHandler(zedGraph_MouseMove);
             zedGraph.MouseClick+= new MouseEventHandler(zedGraph_MouseClick);
 
@@ -37,26 +42,9 @@ namespace ThePool
             myPane.Title.Text = "资金池(万)";
             myPane.XAxis.Title.Text = "日期 (点击柱状图显示详细信息)";
             myPane.YAxis.Title.Text = "总量";
-
-            // Create points for three BarItems
-            PointPairList list1 = new PointPairList();
-            PointPairList list2 = new PointPairList();
-
-            // data values
-            list1.Add(new XDate(2012, 12, 01), 100);
-            list1.Add(new XDate(2013, 01, 01), 150);
-
-            list2.Add(new XDate(2012, 12, 01), 10);
-            list2.Add(new XDate(2013, 01, 01), 20);
-
-            // degrees for horizontal bars
-            BarItem bar1 = myPane.AddBar("资产", list1, Color.Red);
-            bar1.Bar.Fill = new Fill(Color.LightBlue);
-            BarItem bar2 = myPane.AddBar("现金", list2, Color.Blue);
-            bar2.Bar.Fill = new Fill(Color.Gold);
-
+            
             myPane.XAxis.Scale.MajorStep = 1;
-            myPane.XAxis.Type = AxisType.DateAsOrdinal;
+            myPane.XAxis.Type = AxisType.Text;
 
             // Set BarBase to the YAxis for horizontal bars
             myPane.BarSettings.Base = BarBase.X;
@@ -66,19 +54,70 @@ namespace ThePool
             // Fill the axis background with a color gradient
             myPane.Chart.Fill = new Fill(Color.White, Color.FromArgb(255, 255, 166), 45.0F);
 
+            Reload(DateTime.Now.Year);
+        }
+
+        private void Reload(int year)
+        {
+            myPane.CurveList.Clear();
+
+            partners  = Xml.LoadPartner(@"data/XML_Partner.xml");
+            projects  = Xml.LoadProject(@"data/XML_Project.xml");
+            debts     = Xml.LoadDebt(@"data/XML_Debt.xml");
+            calendars = Xml.LoadCalendar(@"data/XML_Calendar.xml");
+
+            PointPairList invests = new PointPairList();
+            PointPairList cash    = new PointPairList();
+            List<string> Xlabelslist = new List<string>();
+
+            // To Do: the calculation
+/*
+            // Create points for three BarItems
+            string[] XAxisLabels = { "2012年12月", "2013年1月", "2013年2月", };
+            PointPairList list1 = new PointPairList();
+            PointPairList list2 = new PointPairList();
+
+            // data values
+            list1.Add(0, 100);
+            list1.Add(1, 150);
+            list1.Add(2, 200);
+
+            list2.Add(0, 1);
+            list2.Add(1, 20);
+            list2.Add(2, 30);
+
+            // degrees for horizontal bars
+            myPane.XAxis.Scale.TextLabels = XAxisLabels;
+            barInvest = myPane.AddBar("资产", list1, Color.Red);
+            barInvest.Bar.Fill = new Fill(Color.LightBlue);
+            barCash = myPane.AddBar("现金", list2, Color.Blue);
+            barCash.Bar.Fill = new Fill(Color.Gold);
+
             zedGraph.AxisChange();
 
+            // add outview data
+            barInvest.AddPoint(3, 250);
+            barCash.AddPoint(3, 40);
+
             // Create TextObj's to provide labels for each bar
+ */
             CreateBarLabels(myPane, true, "N0");
         }
 
         private void Form1_SizeChanged(object sender, EventArgs e)
         {
-            panel1.Height = Height - 82;
+            panel1.Location = new Point(0, 34);
+            panel1.Width = Width - 16;
+            panel1.Height = Height - 116;
+            dateTimePicker_year.Location = new Point(Width / 2 - 36, 7);
+            button_pre.Location = new Point(Width / 2 - 120, 5);
+            button_next.Location = new Point(Width / 2 + 29, 5);
             button_partner.Location = new Point(0, Height - 76);
             button_invest.Location = new Point(button_invest.Location.X, Height - 76);
+            button_debt.Location = new Point(button_debt.Location.X, Height - 76);
             button_quit.Location = new Point(Width - 128, Height - 76);
         }
+
 
         private void button_quit_Click(object sender, EventArgs e)
         {
@@ -95,6 +134,12 @@ namespace ThePool
         {
             Form_Project project = new Form_Project();
             project.ShowDialog();
+        }
+
+        private void button_debt_Click(object sender, EventArgs e)
+        {
+            Form_Debt debt = new Form_Debt();
+            debt.ShowDialog();
         }
 
         private void zedGraph_MouseMove(object sender, MouseEventArgs e)
@@ -206,10 +251,40 @@ namespace ThePool
 
                         // Add the TextObj to the GraphPane
                         pane.GraphObjList.Add(label);
+
+                        //if(curveIndex == 1)
+                        //{
+                        //    string total = (points[i].Y + pane.CurveList[0].Points[i].Y).ToString();
+                        //    TextObj totallabel = new TextObj(total, centerVal, position + hiVal - lowVal);
+                        //    totallabel.Location.CoordinateFrame = CoordType.AxisXYScale;
+                        //    totallabel.FontSpec.Size = 12;
+                        //    totallabel.FontSpec.FontColor = Color.Black;
+                        //    totallabel.FontSpec.Angle = isVertical ? 0 : 90;
+                        //    totallabel.Location.AlignH = isBarCenter ? AlignH.Center : AlignH.Left;
+                        //    totallabel.Location.AlignV = AlignV.Center;
+                        //    totallabel.FontSpec.Border.IsVisible = false;
+                        //    totallabel.FontSpec.Fill.IsVisible = false;
+                        //    pane.GraphObjList.Add(totallabel);
+                        //}
                     }
                 }
                 curveIndex++;
             }
+        }
+
+        private void dateTimePicker_year_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button_pre_Click(object sender, EventArgs e)
+        {
+            dateTimePicker_year.Value = new DateTime(dateTimePicker_year.Value.Year - 1, 1, 1);
+        }
+
+        private void button_next_Click(object sender, EventArgs e)
+        {
+            dateTimePicker_year.Value = new DateTime(dateTimePicker_year.Value.Year + 1, 1, 1);
         }
     }
 }

@@ -1,0 +1,3 @@
+﻿1. cycly payout
+2. user defined calendar item should be shown as blue(diff from the generated red)
+3. 

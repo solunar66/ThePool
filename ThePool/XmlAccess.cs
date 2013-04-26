@@ -219,7 +219,7 @@ namespace ThePool
             XmlNode root = xml.SelectSingleNode("Debts");
             root.RemoveAll();
 
-            foreach (Project debt in debts)
+            foreach (Debt debt in debts)
             {
                 XmlNode d = AppendElement(root, "debt");
                 SetAttribute(d, "name", debt.name);

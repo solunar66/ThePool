@@ -31,23 +31,26 @@
             this.listBox_name = new System.Windows.Forms.ListBox();
             this.dataGridView_volume = new System.Windows.Forms.DataGridView();
             this.groupbox_info = new System.Windows.Forms.GroupBox();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.button_eject = new System.Windows.Forms.Button();
+            this.button_inject = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.textBox_phone = new System.Windows.Forms.TextBox();
             this.textBox_comment = new System.Windows.Forms.TextBox();
             this.textBox_name = new System.Windows.Forms.TextBox();
+            this.button_delete = new System.Windows.Forms.Button();
+            this.button_new = new System.Windows.Forms.Button();
+            this.button_save = new System.Windows.Forms.Button();
             this.button_load = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.button_quit = new System.Windows.Forms.Button();
+            this.Column_cycle = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column_volume = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column_rate = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_cycle = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.Column_start = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_end = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column_comment = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_volume)).BeginInit();
             this.groupbox_info.SuspendLayout();
@@ -71,22 +74,19 @@
             this.Column_volume,
             this.Column_rate,
             this.Column_cycle,
-            this.Column_start,
-            this.Column_end,
             this.Column_comment});
+            this.dataGridView_volume.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.dataGridView_volume.Location = new System.Drawing.Point(6, 116);
             this.dataGridView_volume.MultiSelect = false;
             this.dataGridView_volume.Name = "dataGridView_volume";
             this.dataGridView_volume.RowTemplate.Height = 23;
-            this.dataGridView_volume.Size = new System.Drawing.Size(436, 149);
+            this.dataGridView_volume.Size = new System.Drawing.Size(436, 175);
             this.dataGridView_volume.TabIndex = 1;
-            this.dataGridView_volume.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dataGridView1_CellValidating);
             // 
             // groupbox_info
             // 
-            this.groupbox_info.Controls.Add(this.button3);
-            this.groupbox_info.Controls.Add(this.button2);
-            this.groupbox_info.Controls.Add(this.button1);
+            this.groupbox_info.Controls.Add(this.button_eject);
+            this.groupbox_info.Controls.Add(this.button_inject);
             this.groupbox_info.Controls.Add(this.dataGridView_volume);
             this.groupbox_info.Controls.Add(this.label3);
             this.groupbox_info.Controls.Add(this.label7);
@@ -101,35 +101,32 @@
             this.groupbox_info.TabStop = false;
             this.groupbox_info.Text = "股东信息";
             // 
-            // button3
+            // button_eject
             // 
-            this.button3.Location = new System.Drawing.Point(103, 270);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(91, 21);
-            this.button3.TabIndex = 5;
-            this.button3.Text = "删除股东";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.button_eject.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.button_eject.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_eject.Location = new System.Drawing.Point(351, 266);
+            this.button_eject.Name = "button_eject";
+            this.button_eject.Size = new System.Drawing.Size(91, 25);
+            this.button_eject.TabIndex = 5;
+            this.button_eject.Text = "撤 资";
+            this.button_eject.UseVisualStyleBackColor = true;
+            this.button_eject.Visible = false;
+            this.button_eject.Click += new System.EventHandler(this.button_eject_Click);
             // 
-            // button2
+            // button_inject
             // 
-            this.button2.Location = new System.Drawing.Point(6, 270);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(91, 21);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "新建股东";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(351, 270);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(91, 21);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "保存股东信息";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button_inject.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.button_inject.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_inject.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.button_inject.Location = new System.Drawing.Point(254, 266);
+            this.button_inject.Name = "button_inject";
+            this.button_inject.Size = new System.Drawing.Size(91, 25);
+            this.button_inject.TabIndex = 5;
+            this.button_inject.Text = "注 资";
+            this.button_inject.UseVisualStyleBackColor = true;
+            this.button_inject.Visible = false;
+            this.button_inject.Click += new System.EventHandler(this.button_inject_Click);
             // 
             // label3
             // 
@@ -182,12 +179,44 @@
             this.textBox_name.Size = new System.Drawing.Size(100, 21);
             this.textBox_name.TabIndex = 2;
             // 
+            // button_delete
+            // 
+            this.button_delete.Location = new System.Drawing.Point(109, 308);
+            this.button_delete.Name = "button_delete";
+            this.button_delete.Size = new System.Drawing.Size(91, 25);
+            this.button_delete.TabIndex = 5;
+            this.button_delete.Text = "删除股东";
+            this.button_delete.UseVisualStyleBackColor = true;
+            this.button_delete.Click += new System.EventHandler(this.button_delete_Click);
+            // 
+            // button_new
+            // 
+            this.button_new.Location = new System.Drawing.Point(12, 307);
+            this.button_new.Name = "button_new";
+            this.button_new.Size = new System.Drawing.Size(91, 25);
+            this.button_new.TabIndex = 5;
+            this.button_new.Text = "新建股东";
+            this.button_new.UseVisualStyleBackColor = true;
+            this.button_new.Click += new System.EventHandler(this.button_new_Click);
+            // 
+            // button_save
+            // 
+            this.button_save.Location = new System.Drawing.Point(413, 307);
+            this.button_save.Name = "button_save";
+            this.button_save.Size = new System.Drawing.Size(91, 25);
+            this.button_save.TabIndex = 5;
+            this.button_save.Text = "保存股东信息";
+            this.button_save.UseVisualStyleBackColor = true;
+            this.button_save.Click += new System.EventHandler(this.button_save_Click);
+            // 
             // button_load
             // 
+            this.button_load.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.button_load.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_load.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button_load.Location = new System.Drawing.Point(118, 144);
+            this.button_load.Location = new System.Drawing.Point(118, 22);
             this.button_load.Name = "button_load";
-            this.button_load.Size = new System.Drawing.Size(35, 28);
+            this.button_load.Size = new System.Drawing.Size(35, 280);
             this.button_load.TabIndex = 3;
             this.button_load.Text = ">>";
             this.button_load.UseVisualStyleBackColor = true;
@@ -207,25 +236,15 @@
             this.button_quit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.button_quit.Location = new System.Drawing.Point(510, 307);
             this.button_quit.Name = "button_quit";
-            this.button_quit.Size = new System.Drawing.Size(91, 21);
+            this.button_quit.Size = new System.Drawing.Size(91, 25);
             this.button_quit.TabIndex = 8;
             this.button_quit.Text = "退 出";
             this.button_quit.UseVisualStyleBackColor = true;
-            // 
-            // Column_volume
-            // 
-            this.Column_volume.HeaderText = "资金(万)";
-            this.Column_volume.Name = "Column_volume";
-            this.Column_volume.Width = 80;
-            // 
-            // Column_rate
-            // 
-            this.Column_rate.HeaderText = "利率(%)";
-            this.Column_rate.Name = "Column_rate";
-            this.Column_rate.Width = 75;
+            this.button_quit.Click += new System.EventHandler(this.button_quit_Click);
             // 
             // Column_cycle
             // 
+            this.Column_cycle.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
             this.Column_cycle.HeaderText = "付息周期";
             this.Column_cycle.Items.AddRange(new object[] {
             "不定期",
@@ -238,17 +257,35 @@
             this.Column_cycle.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.Column_cycle.Width = 80;
             // 
-            // Column_start
+            // dataGridViewTextBoxColumn1
             // 
-            this.Column_start.HeaderText = "起始时间";
-            this.Column_start.Name = "Column_start";
-            this.Column_start.Width = 80;
+            this.dataGridViewTextBoxColumn1.HeaderText = "资金(万)";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.Width = 80;
             // 
-            // Column_end
+            // dataGridViewTextBoxColumn2
             // 
-            this.Column_end.HeaderText = "终止时间";
-            this.Column_end.Name = "Column_end";
-            this.Column_end.Width = 80;
+            this.dataGridViewTextBoxColumn2.HeaderText = "利率";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            this.dataGridViewTextBoxColumn2.Width = 60;
+            // 
+            // dataGridViewTextBoxColumn3
+            // 
+            this.dataGridViewTextBoxColumn3.HeaderText = "备注";
+            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            this.dataGridViewTextBoxColumn3.Width = 150;
+            // 
+            // Column_volume
+            // 
+            this.Column_volume.HeaderText = "资金(万)";
+            this.Column_volume.Name = "Column_volume";
+            this.Column_volume.Width = 80;
+            // 
+            // Column_rate
+            // 
+            this.Column_rate.HeaderText = "利率";
+            this.Column_rate.Name = "Column_rate";
+            this.Column_rate.Width = 60;
             // 
             // Column_comment
             // 
@@ -261,8 +298,11 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button_quit;
-            this.ClientSize = new System.Drawing.Size(619, 332);
+            this.ClientSize = new System.Drawing.Size(619, 339);
+            this.Controls.Add(this.button_save);
+            this.Controls.Add(this.button_delete);
             this.Controls.Add(this.button_quit);
+            this.Controls.Add(this.button_new);
             this.Controls.Add(this.button_load);
             this.Controls.Add(this.groupbox_info);
             this.Controls.Add(this.listBox_name);
@@ -275,6 +315,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "股东信息";
+            this.Load += new System.EventHandler(this.Form_Partner_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_volume)).EndInit();
             this.groupbox_info.ResumeLayout(false);
             this.groupbox_info.PerformLayout();
@@ -295,16 +336,19 @@
         private System.Windows.Forms.TextBox textBox_phone;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox textBox_comment;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button_save;
+        private System.Windows.Forms.Button button_delete;
+        private System.Windows.Forms.Button button_new;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button button_quit;
+        private System.Windows.Forms.Button button_eject;
+        private System.Windows.Forms.Button button_inject;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_volume;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_rate;
         private System.Windows.Forms.DataGridViewComboBoxColumn Column_cycle;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column_start;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column_end;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_comment;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
     }
 }

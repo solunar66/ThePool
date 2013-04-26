@@ -1,3 +1,7 @@
 ﻿1. cycly payout
 2. user defined calendar item should be shown as blue(diff from the generated red)
 3. 
+
+1. calender form can list the in/out day of the month
+2. only user defined calendar comments will be stored, leave the generated ones
+3. issue about judge the payback cycle of date

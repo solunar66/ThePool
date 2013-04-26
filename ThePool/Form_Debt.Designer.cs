@@ -32,9 +32,6 @@
             this.groupbox_info = new System.Windows.Forms.GroupBox();
             this.dateTimePicker_start = new System.Windows.Forms.DateTimePicker();
             this.comboBox_cycle = new System.Windows.Forms.ComboBox();
-            this.button_delete = new System.Windows.Forms.Button();
-            this.button_new = new System.Windows.Forms.Button();
-            this.button_save = new System.Windows.Forms.Button();
             this.numericUpDown_volume = new System.Windows.Forms.NumericUpDown();
             this.label10 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
@@ -44,6 +41,9 @@
             this.label1 = new System.Windows.Forms.Label();
             this.textBox_comment = new System.Windows.Forms.TextBox();
             this.textBox_name = new System.Windows.Forms.TextBox();
+            this.button_delete = new System.Windows.Forms.Button();
+            this.button_new = new System.Windows.Forms.Button();
+            this.button_save = new System.Windows.Forms.Button();
             this.button_load = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.listBox_name = new System.Windows.Forms.ListBox();
@@ -66,9 +66,6 @@
             this.groupbox_info.Controls.Add(this.dateTimePicker_end);
             this.groupbox_info.Controls.Add(this.dateTimePicker_start);
             this.groupbox_info.Controls.Add(this.comboBox_cycle);
-            this.groupbox_info.Controls.Add(this.button_delete);
-            this.groupbox_info.Controls.Add(this.button_new);
-            this.groupbox_info.Controls.Add(this.button_save);
             this.groupbox_info.Controls.Add(this.numericUpDown_volume);
             this.groupbox_info.Controls.Add(this.label10);
             this.groupbox_info.Controls.Add(this.label7);
@@ -80,7 +77,7 @@
             this.groupbox_info.Controls.Add(this.textBox_name);
             this.groupbox_info.Location = new System.Drawing.Point(159, 12);
             this.groupbox_info.Name = "groupbox_info";
-            this.groupbox_info.Size = new System.Drawing.Size(450, 213);
+            this.groupbox_info.Size = new System.Drawing.Size(450, 189);
             this.groupbox_info.TabIndex = 10;
             this.groupbox_info.TabStop = false;
             this.groupbox_info.Text = "负债信息";
@@ -107,36 +104,6 @@
             this.comboBox_cycle.Name = "comboBox_cycle";
             this.comboBox_cycle.Size = new System.Drawing.Size(100, 20);
             this.comboBox_cycle.TabIndex = 6;
-            // 
-            // button_delete
-            // 
-            this.button_delete.Location = new System.Drawing.Point(105, 186);
-            this.button_delete.Name = "button_delete";
-            this.button_delete.Size = new System.Drawing.Size(91, 21);
-            this.button_delete.TabIndex = 5;
-            this.button_delete.Text = "删除负债";
-            this.button_delete.UseVisualStyleBackColor = true;
-            this.button_delete.Click += new System.EventHandler(this.button_delete_Click);
-            // 
-            // button_new
-            // 
-            this.button_new.Location = new System.Drawing.Point(8, 186);
-            this.button_new.Name = "button_new";
-            this.button_new.Size = new System.Drawing.Size(91, 21);
-            this.button_new.TabIndex = 5;
-            this.button_new.Text = "新建负债";
-            this.button_new.UseVisualStyleBackColor = true;
-            this.button_new.Click += new System.EventHandler(this.button_new_Click);
-            // 
-            // button_save
-            // 
-            this.button_save.Location = new System.Drawing.Point(353, 186);
-            this.button_save.Name = "button_save";
-            this.button_save.Size = new System.Drawing.Size(91, 21);
-            this.button_save.TabIndex = 5;
-            this.button_save.Text = "保存负债信息";
-            this.button_save.UseVisualStyleBackColor = true;
-            this.button_save.Click += new System.EventHandler(this.button_save_Click);
             // 
             // numericUpDown_volume
             // 
@@ -221,12 +188,42 @@
             this.textBox_name.Size = new System.Drawing.Size(100, 21);
             this.textBox_name.TabIndex = 2;
             // 
+            // button_delete
+            // 
+            this.button_delete.Location = new System.Drawing.Point(109, 216);
+            this.button_delete.Name = "button_delete";
+            this.button_delete.Size = new System.Drawing.Size(91, 25);
+            this.button_delete.TabIndex = 5;
+            this.button_delete.Text = "删除负债";
+            this.button_delete.UseVisualStyleBackColor = true;
+            this.button_delete.Click += new System.EventHandler(this.button_delete_Click);
+            // 
+            // button_new
+            // 
+            this.button_new.Location = new System.Drawing.Point(12, 216);
+            this.button_new.Name = "button_new";
+            this.button_new.Size = new System.Drawing.Size(91, 25);
+            this.button_new.TabIndex = 5;
+            this.button_new.Text = "新建负债";
+            this.button_new.UseVisualStyleBackColor = true;
+            this.button_new.Click += new System.EventHandler(this.button_new_Click);
+            // 
+            // button_save
+            // 
+            this.button_save.Location = new System.Drawing.Point(415, 216);
+            this.button_save.Name = "button_save";
+            this.button_save.Size = new System.Drawing.Size(91, 25);
+            this.button_save.TabIndex = 5;
+            this.button_save.Text = "保存负债信息";
+            this.button_save.UseVisualStyleBackColor = true;
+            this.button_save.Click += new System.EventHandler(this.button_save_Click);
+            // 
             // button_load
             // 
             this.button_load.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button_load.Location = new System.Drawing.Point(118, 116);
+            this.button_load.Location = new System.Drawing.Point(118, 29);
             this.button_load.Name = "button_load";
-            this.button_load.Size = new System.Drawing.Size(35, 28);
+            this.button_load.Size = new System.Drawing.Size(35, 172);
             this.button_load.TabIndex = 11;
             this.button_load.Text = ">>";
             this.button_load.UseVisualStyleBackColor = true;
@@ -248,15 +245,15 @@
             this.listBox_name.Location = new System.Drawing.Point(12, 29);
             this.listBox_name.Name = "listBox_name";
             this.listBox_name.ScrollAlwaysVisible = true;
-            this.listBox_name.Size = new System.Drawing.Size(100, 196);
+            this.listBox_name.Size = new System.Drawing.Size(100, 172);
             this.listBox_name.TabIndex = 9;
             // 
             // button_quit
             // 
             this.button_quit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button_quit.Location = new System.Drawing.Point(512, 231);
+            this.button_quit.Location = new System.Drawing.Point(512, 216);
             this.button_quit.Name = "button_quit";
-            this.button_quit.Size = new System.Drawing.Size(91, 21);
+            this.button_quit.Size = new System.Drawing.Size(91, 25);
             this.button_quit.TabIndex = 12;
             this.button_quit.Text = "退 出";
             this.button_quit.UseVisualStyleBackColor = true;
@@ -266,11 +263,14 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button_quit;
-            this.ClientSize = new System.Drawing.Size(624, 262);
+            this.ClientSize = new System.Drawing.Size(624, 252);
             this.Controls.Add(this.groupbox_info);
             this.Controls.Add(this.button_load);
             this.Controls.Add(this.label6);
+            this.Controls.Add(this.button_delete);
+            this.Controls.Add(this.button_new);
             this.Controls.Add(this.listBox_name);
+            this.Controls.Add(this.button_save);
             this.Controls.Add(this.button_quit);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -279,6 +279,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "负债支出";
+            this.Load += new System.EventHandler(this.Form_Debt_Load);
             this.groupbox_info.ResumeLayout(false);
             this.groupbox_info.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_volume)).EndInit();

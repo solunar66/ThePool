@@ -35,11 +35,10 @@
             this.button_delete = new System.Windows.Forms.Button();
             this.button_new = new System.Windows.Forms.Button();
             this.button_save = new System.Windows.Forms.Button();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown_volume = new System.Windows.Forms.NumericUpDown();
             this.numericUpDown_rate = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -56,7 +55,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.button_quit = new System.Windows.Forms.Button();
             this.groupbox_info.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_volume)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_rate)).BeginInit();
             this.SuspendLayout();
             // 
@@ -65,14 +64,10 @@
             this.groupbox_info.Controls.Add(this.dateTimePicker_end);
             this.groupbox_info.Controls.Add(this.dateTimePicker_start);
             this.groupbox_info.Controls.Add(this.comboBox_cycle);
-            this.groupbox_info.Controls.Add(this.button_delete);
-            this.groupbox_info.Controls.Add(this.button_new);
-            this.groupbox_info.Controls.Add(this.button_save);
-            this.groupbox_info.Controls.Add(this.numericUpDown1);
+            this.groupbox_info.Controls.Add(this.numericUpDown_volume);
             this.groupbox_info.Controls.Add(this.numericUpDown_rate);
             this.groupbox_info.Controls.Add(this.label3);
             this.groupbox_info.Controls.Add(this.label10);
-            this.groupbox_info.Controls.Add(this.label5);
             this.groupbox_info.Controls.Add(this.label2);
             this.groupbox_info.Controls.Add(this.label7);
             this.groupbox_info.Controls.Add(this.label4);
@@ -86,7 +81,7 @@
             this.groupbox_info.Controls.Add(this.textBox_name);
             this.groupbox_info.Location = new System.Drawing.Point(159, 6);
             this.groupbox_info.Name = "groupbox_info";
-            this.groupbox_info.Size = new System.Drawing.Size(450, 246);
+            this.groupbox_info.Size = new System.Drawing.Size(450, 213);
             this.groupbox_info.TabIndex = 5;
             this.groupbox_info.TabStop = false;
             this.groupbox_info.Text = "项目信息";
@@ -125,49 +120,58 @@
             // 
             // button_delete
             // 
-            this.button_delete.Location = new System.Drawing.Point(105, 219);
+            this.button_delete.Location = new System.Drawing.Point(108, 225);
             this.button_delete.Name = "button_delete";
-            this.button_delete.Size = new System.Drawing.Size(91, 21);
+            this.button_delete.Size = new System.Drawing.Size(91, 25);
             this.button_delete.TabIndex = 5;
             this.button_delete.Text = "删除项目";
             this.button_delete.UseVisualStyleBackColor = true;
+            this.button_delete.Click += new System.EventHandler(this.button_delete_Click);
             // 
             // button_new
             // 
-            this.button_new.Location = new System.Drawing.Point(8, 219);
+            this.button_new.Location = new System.Drawing.Point(11, 225);
             this.button_new.Name = "button_new";
-            this.button_new.Size = new System.Drawing.Size(91, 21);
+            this.button_new.Size = new System.Drawing.Size(91, 25);
             this.button_new.TabIndex = 5;
             this.button_new.Text = "新建项目";
             this.button_new.UseVisualStyleBackColor = true;
+            this.button_new.Click += new System.EventHandler(this.button_new_Click);
             // 
             // button_save
             // 
-            this.button_save.Location = new System.Drawing.Point(353, 219);
+            this.button_save.Location = new System.Drawing.Point(413, 225);
             this.button_save.Name = "button_save";
-            this.button_save.Size = new System.Drawing.Size(91, 21);
+            this.button_save.Size = new System.Drawing.Size(91, 25);
             this.button_save.TabIndex = 5;
             this.button_save.Text = "保存项目信息";
             this.button_save.UseVisualStyleBackColor = true;
+            this.button_save.Click += new System.EventHandler(this.button_save_Click);
             // 
-            // numericUpDown1
+            // numericUpDown_volume
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(6, 90);
-            this.numericUpDown1.Maximum = new decimal(new int[] {
+            this.numericUpDown_volume.Location = new System.Drawing.Point(6, 90);
+            this.numericUpDown_volume.Maximum = new decimal(new int[] {
             10000,
             0,
             0,
             0});
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(100, 21);
-            this.numericUpDown1.TabIndex = 4;
-            this.numericUpDown1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numericUpDown_volume.Name = "numericUpDown_volume";
+            this.numericUpDown_volume.Size = new System.Drawing.Size(100, 21);
+            this.numericUpDown_volume.TabIndex = 4;
+            this.numericUpDown_volume.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // numericUpDown_rate
             // 
+            this.numericUpDown_rate.DecimalPlaces = 2;
+            this.numericUpDown_rate.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
             this.numericUpDown_rate.Location = new System.Drawing.Point(121, 90);
             this.numericUpDown_rate.Name = "numericUpDown_rate";
-            this.numericUpDown_rate.Size = new System.Drawing.Size(85, 21);
+            this.numericUpDown_rate.Size = new System.Drawing.Size(100, 21);
             this.numericUpDown_rate.TabIndex = 4;
             this.numericUpDown_rate.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
@@ -188,16 +192,6 @@
             this.label10.Size = new System.Drawing.Size(65, 12);
             this.label10.TabIndex = 3;
             this.label10.Text = "资金量(万)";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label5.Location = new System.Drawing.Point(207, 93);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(15, 13);
-            this.label5.TabIndex = 3;
-            this.label5.Text = "%";
             // 
             // label2
             // 
@@ -307,12 +301,13 @@
             // button_load
             // 
             this.button_load.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button_load.Location = new System.Drawing.Point(118, 110);
+            this.button_load.Location = new System.Drawing.Point(118, 23);
             this.button_load.Name = "button_load";
-            this.button_load.Size = new System.Drawing.Size(35, 28);
+            this.button_load.Size = new System.Drawing.Size(35, 196);
             this.button_load.TabIndex = 6;
             this.button_load.Text = ">>";
             this.button_load.UseVisualStyleBackColor = true;
+            this.button_load.Click += new System.EventHandler(this.button_load_Click);
             // 
             // label6
             // 
@@ -326,9 +321,9 @@
             // button_quit
             // 
             this.button_quit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button_quit.Location = new System.Drawing.Point(511, 257);
+            this.button_quit.Location = new System.Drawing.Point(510, 225);
             this.button_quit.Name = "button_quit";
-            this.button_quit.Size = new System.Drawing.Size(91, 21);
+            this.button_quit.Size = new System.Drawing.Size(91, 25);
             this.button_quit.TabIndex = 7;
             this.button_quit.Text = "退 出";
             this.button_quit.UseVisualStyleBackColor = true;
@@ -338,11 +333,14 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button_quit;
-            this.ClientSize = new System.Drawing.Size(617, 289);
+            this.ClientSize = new System.Drawing.Size(617, 257);
             this.Controls.Add(this.button_quit);
             this.Controls.Add(this.groupbox_info);
             this.Controls.Add(this.listBox_name);
+            this.Controls.Add(this.button_delete);
+            this.Controls.Add(this.button_new);
             this.Controls.Add(this.button_load);
+            this.Controls.Add(this.button_save);
             this.Controls.Add(this.label6);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -351,9 +349,10 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "投资项目";
+            this.Load += new System.EventHandler(this.Form_Project_Load);
             this.groupbox_info.ResumeLayout(false);
             this.groupbox_info.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_volume)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_rate)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -368,7 +367,6 @@
         private System.Windows.Forms.Button button_save;
         private System.Windows.Forms.NumericUpDown numericUpDown_rate;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label1;
@@ -387,7 +385,7 @@
         private System.Windows.Forms.Button button_quit;
         private System.Windows.Forms.DateTimePicker dateTimePicker_end;
         private System.Windows.Forms.DateTimePicker dateTimePicker_start;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.NumericUpDown numericUpDown_volume;
         private System.Windows.Forms.Label label10;
 
     }

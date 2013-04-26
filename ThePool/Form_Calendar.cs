@@ -22,6 +22,7 @@ namespace ThePool
             InitializeComponent();
 
             Controls.Add(dateControl);
+            dateControl.BorderStyle = BorderStyle.FixedSingle;
             dateControl.Dock = DockStyle.Top;
             dateControl.DrawLine = false;
             dateControl.ShowJieriInfo = false;
@@ -44,6 +45,7 @@ namespace ThePool
 
         private void ToolStripMenuItem_delete_Click(object sender, EventArgs e)
         {
+            if (dataGridView_info.SelectedRows[0].ReadOnly || dataGridView_info.SelectedRows[0].IsNewRow) return;
             dataGridView_info.Rows.Remove(dataGridView_info.SelectedRows[0]);
         }
 
@@ -53,6 +55,22 @@ namespace ThePool
             {
                 dataGridView_info.Rows[e.RowIndex].Selected = true;
             }
+        }
+
+        private void Form_Calendar_Load(object sender, EventArgs e)
+        {
+            // loop partners' paybacks
+            // loop projects' paybacks
+            // loop debts' outputs
+            // loop calendar's comments
+            // the generated rows are readonly
+            
+            
+        }
+
+        private void button_save_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

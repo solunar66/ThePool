@@ -20,7 +20,11 @@ namespace ThePool
         GraphPane tmpPane;
         BarItem barInvest, barCash;
 
-        public static ArrayList partners, projects, debts, calendars;
+        public static ArrayList ar_Partners, ar_Projects, ar_Debts, ar_Calendars;
+        public static string file_Partners  = @"data/XML_Partner.xml";
+        public static string file_Projects  = @"data/XML_Project.xml";
+        public static string file_Debts     = @"data/XML_Debt.xml";
+        public static string file_Calendars = @"data/XML_Calendar.xml";
         
         public Form_Main()
         {
@@ -57,21 +61,22 @@ namespace ThePool
             Reload(DateTime.Now.Year);
         }
 
-        private void Reload(int year)
+        public void Reload(int year)
         {
             myPane.CurveList.Clear();
 
-            partners  = Xml.LoadPartner(@"data/XML_Partner.xml");
-            projects  = Xml.LoadProject(@"data/XML_Project.xml");
-            debts     = Xml.LoadDebt(@"data/XML_Debt.xml");
-            calendars = Xml.LoadCalendar(@"data/XML_Calendar.xml");
+            ar_Partners  = Xml.LoadPartner(file_Partners);
+            ar_Projects  = Xml.LoadProject(file_Projects);
+            ar_Debts     = Xml.LoadDebt(file_Debts);
+            ar_Calendars = Xml.LoadCalendar(file_Calendars);
 
             PointPairList invests = new PointPairList();
             PointPairList cash    = new PointPairList();
             List<string> Xlabelslist = new List<string>();
 
             // To Do: the calculation
-/*
+
+
             // Create points for three BarItems
             string[] XAxisLabels = { "2012年12月", "2013年1月", "2013年2月", };
             PointPairList list1 = new PointPairList();
@@ -100,7 +105,7 @@ namespace ThePool
             barCash.AddPoint(3, 40);
 
             // Create TextObj's to provide labels for each bar
- */
+
             CreateBarLabels(myPane, true, "N0");
         }
 

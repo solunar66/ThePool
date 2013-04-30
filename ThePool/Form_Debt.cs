@@ -47,7 +47,7 @@ namespace ThePool
                 {
                     textBox_name.Text = debt.name;
                     textBox_comment.Text = debt.comment;
-                    numericUpDown_volume.Value = debt.volume;
+                    numericUpDown_volume.Value = (decimal)debt.volume;
                     comboBox_cycle.SelectedIndex = (int)debt.cycle;
                     dateTimePicker_start.Value = debt.start;
                     dateTimePicker_end.Value = debt.end;
@@ -100,7 +100,7 @@ namespace ThePool
             Debt debt = new Debt();
             debt.name = textBox_name.Text;
             debt.comment = textBox_comment.Text;
-            debt.volume = (int)numericUpDown_volume.Value;
+            debt.volume = (float)numericUpDown_volume.Value;
             debt.cycle = (Cycle)Enum.ToObject(typeof(Cycle), byte.Parse(comboBox_cycle.SelectedIndex.ToString()));
             debt.start = dateTimePicker_start.Value;
             debt.end = dateTimePicker_end.Value;

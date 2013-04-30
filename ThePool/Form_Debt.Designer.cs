@@ -107,9 +107,15 @@
             // 
             // numericUpDown_volume
             // 
+            this.numericUpDown_volume.DecimalPlaces = 1;
+            this.numericUpDown_volume.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
             this.numericUpDown_volume.Location = new System.Drawing.Point(129, 41);
             this.numericUpDown_volume.Maximum = new decimal(new int[] {
-            10000,
+            1000,
             0,
             0,
             0});

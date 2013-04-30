@@ -1,3 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Calendar>
+  <Year value="2013">
+    <Month value="4">
+      <Day value="30">
+        <flow type="0" volume="5" comment="test income"/>
+      </Day>
+    </Month>
+  </Year>
 </Calendar>

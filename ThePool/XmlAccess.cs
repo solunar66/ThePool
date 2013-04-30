@@ -20,6 +20,13 @@ namespace ThePool
         income,
         payout
     }
+
+    public struct Flow
+    {
+        public FlowType type;
+        public float volume;
+        public string comment;
+    }
     
     public struct Fund
     {
@@ -55,7 +62,7 @@ namespace ThePool
     public struct Debt
     {
         public string name;
-        public int volume;
+        public float volume;
         public Cycle cycle;
         public string comment;
         public DateTime start;
@@ -65,11 +72,7 @@ namespace ThePool
     public struct Calendar
     {
         public DateTime date;
-        public FlowType type;
-        public int volume;
-        public string partner;
-        public string project;
-        public string comment;
+        public ArrayList flows;
     }
 
     /// <summary>
@@ -201,7 +204,7 @@ namespace ThePool
             {
                 Debt d = new Debt();
                 d.name = debt.Attributes["name"].Value;
-                d.volume = int.Parse(debt.Attributes["volume"].Value);
+                d.volume = float.Parse(debt.Attributes["volume"].Value);
                 d.cycle = (Cycle)(Enum.ToObject(typeof(Cycle), byte.Parse(debt.Attributes["cycle"].Value)));
                 d.start = DateTime.Parse(debt.Attributes["start"].Value);
                 d.end = DateTime.Parse(debt.Attributes["end"].Value);
@@ -237,13 +240,73 @@ namespace ThePool
         {
             ArrayList calendars = new ArrayList();
 
+            XmlDocument xml = new XmlDocument();
+            xml.Load(file);
+            XmlNode root = xml.SelectSingleNode("Calendar");
 
+            foreach (XmlNode year in root.ChildNodes)
+            {
+                foreach (XmlNode month in year.ChildNodes)
+                {
+                    foreach (XmlNode day in month.ChildNodes)
+                    {
+                        Calendar calendar = new Calendar();
+                        calendar.date = new DateTime(int.Parse(year.Attributes["value"].Value),
+                                                     int.Parse(month.Attributes["value"].Value),
+                                                     int.Parse(day.Attributes["value"].Value));
+                        calendar.flows = new ArrayList();
+                        foreach (XmlNode flow in day.ChildNodes)
+                        {
+                            Flow f = new Flow();
+                            f.type = (FlowType)(Enum.ToObject(typeof(FlowType), byte.Parse(flow.Attributes["type"].Value)));
+                            f.volume = float.Parse(flow.Attributes["volume"].Value);
+                            f.comment = flow.Attributes["comment"].Value;
+                            calendar.flows.Add(f);
+                        }
+                        if (calendar.flows.Count > 0) calendars.Add(calendar);
+                    }
+                }
+            }
 
             return calendars;
         }
 
         public static void UpdateCalendar(string file, ArrayList calendars)
-        { }
+        {
+            if (calendars.Count == 0) return;
+
+            XmlDocument xml = new XmlDocument();
+            xml.Load(file);
+            XmlNode root = xml.SelectSingleNode("Calendar");
+
+            foreach (XmlNode year in root.ChildNodes)
+            {
+                if (int.Parse(year.Attributes["value"].Value) == ((Calendar)calendars[0]).date.Year)
+                {
+                    foreach (XmlNode month in year.ChildNodes)
+                    {
+                        if (int.Parse(month.Attributes["value"].Value) == ((Calendar)calendars[0]).date.Month)
+                        {
+                            month.RemoveAll();
+                            foreach (Calendar calendar in calendars)
+                            {
+                                XmlNode c = AppendElement(month, "day");
+                                SetAttribute(c, "value", calendar.date.Day.ToString());
+                                foreach (Flow flow in calendar.flows)
+                                {
+                                    XmlNode f = AppendElement(c, "flow");
+                                    SetAttribute(f, "type", ((int)flow.type).ToString());
+                                    SetAttribute(f, "volume", flow.volume.ToString());
+                                    SetAttribute(f, "comment", flow.comment);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            xml.Save(file);
+        }
 
         /// <summary>
         /// 创建节点

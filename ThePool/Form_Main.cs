@@ -18,7 +18,6 @@ namespace ThePool
         int ipt;
         object nearestObj;
         GraphPane tmpPane;
-        BarItem barInvest, barCash;
 
         public static ArrayList ar_Partners, ar_Projects, ar_Debts, ar_Calendars;
         public static string file_Partners  = @"data/XML_Partner.xml";
@@ -58,10 +57,10 @@ namespace ThePool
             // Fill the axis background with a color gradient
             myPane.Chart.Fill = new Fill(Color.White, Color.FromArgb(255, 255, 166), 45.0F);
 
-            Reload(DateTime.Now.Year);
+            Reload();
         }
 
-        public void Reload(int year)
+        public void Reload()
         {
             myPane.CurveList.Clear();
 
@@ -74,39 +73,152 @@ namespace ThePool
             PointPairList cash    = new PointPairList();
             List<string> Xlabelslist = new List<string>();
 
+            //
             // To Do: the calculation
+            //
+            // for each month date
+            DateTime start, end;
+            // for interest payment calculation
+            int intervel;
+            // base:    partners' money
+            // invest:  projects' money
+            int baseMoney = 0;
+            int baseInvest = 0;
+            // income:  projects' interest
+            float projInterest = 0;
+            // payout:  partners' interest
+            float parInterest = 0;
+            // outcome: debts' money
+            float debtMoney = 0;
+            // adjust:  calendars' comment
+            float adjustMoney = 0;
 
+            for (int i = 1; i <= 12; i++)
+            {
+                baseMoney = 0;
+                baseInvest = 0;
+                projInterest = 0;
+                parInterest = 0;
+                debtMoney = 0;
+                adjustMoney = 0;
 
-            // Create points for three BarItems
-            string[] XAxisLabels = { "2012年12月", "2013年1月", "2013年2月", };
-            PointPairList list1 = new PointPairList();
-            PointPairList list2 = new PointPairList();
+                start = new DateTime(dateTimePicker_year.Value.Year, i, 1);
+                end = start.AddDays(1 - start.Day).AddMonths(1).AddDays(-1);
+                
+/* partners */  foreach (Partner partner in ar_Partners)
+                {
+                    foreach (Fund fund in partner.funds)
+                    {
+                        if (fund.start < end) // except future invest
+                        {
+                            if (fund.end < end) // finished interest
+                            {
+                                parInterest += fund.volume * (fund.rate / 12) * ((fund.end.Year - fund.start.Year) * 12 + fund.end.Month - fund.start.Month);
+                            }
+                            else
+                            {
+                                baseMoney += fund.volume; // current base money
+                                if (fund.cycle != Cycle.undefined) // undefined payback should be defined in calendar
+                                {
+                                    switch (fund.cycle)
+                                    {
+                                        case Cycle.monthly: intervel = 1; break;
+                                        case Cycle.seasonly: intervel = 3; break;
+                                        case Cycle.halfyearly: intervel = 6; break;
+                                        case Cycle.yearly: intervel = 12; break;
+                                        default: intervel = 0; break;
+                                    }
+                                    parInterest += fund.volume * (fund.rate / intervel) * ((int)((end.Year - fund.start.Year) * 12 + end.Month - fund.start.Month) / intervel);
+                                }
+                            }
+                        }
+                    }
+                }
 
-            // data values
-            list1.Add(0, 100);
-            list1.Add(1, 150);
-            list1.Add(2, 200);
+/* projects */  foreach (Project project in ar_Projects)
+                {
+                    if (project.start < end)
+                    {
+                        if (project.end < end)
+                        {
+                            projInterest += project.volume * (project.rate / 12) * ((project.end.Year - project.start.Year) * 12 + project.end.Month - project.start.Month);
+                        }
+                        else
+                        {
+                            baseInvest += project.volume;
+                            switch (project.cycle)
+                            {
+                                case Cycle.monthly: intervel = 1; break;
+                                case Cycle.seasonly: intervel = 3; break;
+                                case Cycle.halfyearly: intervel = 6; break;
+                                case Cycle.yearly: intervel = 12; break;
+                                default: intervel = 0; break;
+                            }
+                            parInterest += project.volume * (project.rate / intervel) * ((int)((end.Year - project.start.Year) * 12 + end.Month - project.start.Month) / intervel);
+                        }
+                    }
+                }
 
-            list2.Add(0, 1);
-            list2.Add(1, 20);
-            list2.Add(2, 30);
+/* debts */     foreach (Debt debt in ar_Debts)
+                {
+                    if (debt.start < end)
+                    {
+                        switch (debt.cycle)
+                        {
+                            case Cycle.monthly: intervel = 1; break;
+                            case Cycle.seasonly: intervel = 3; break;
+                            case Cycle.halfyearly: intervel = 6; break;
+                            case Cycle.yearly: intervel = 12; break;
+                            default: intervel = 0; break;
+                        }
+                        if (debt.end < end)
+                        {
+                            debtMoney += debt.volume * ((debt.end.Year - debt.start.Year) * 12 + debt.end.Month - debt.start.Month) / intervel;
+                        }
+                        else
+                        {
+                            debtMoney += debt.volume * ((int)((end.Year - debt.start.Year) * 12 + end.Month - debt.start.Month) / intervel);
+                        }
+                    }
+                }
 
+/* calendar */  foreach (Calendar calendar in ar_Calendars)
+                {
+                    if (calendar.date <= end)
+                    {
+                        foreach (Flow flow in calendar.flows)
+                        {
+                            if (flow.type == FlowType.income)
+                            {
+                                adjustMoney += flow.volume;
+                            }
+                            else if (flow.type == FlowType.payout)
+                            {
+                                adjustMoney -= flow.volume;
+                            }
+                        }
+                    }
+                }
+
+                // sum all up
+                Xlabelslist.Add(i.ToString() + "月");
+                invests.Add(new PointPair(i, baseInvest));
+                cash.Add(new PointPair(i, baseMoney - baseInvest + projInterest - parInterest - debtMoney + adjustMoney));
+            }
+                        
             // degrees for horizontal bars
-            myPane.XAxis.Scale.TextLabels = XAxisLabels;
-            barInvest = myPane.AddBar("资产", list1, Color.Red);
+            myPane.XAxis.Scale.TextLabels = Xlabelslist.ToArray();
+            BarItem barInvest = myPane.AddBar("资产", invests, Color.Red);
             barInvest.Bar.Fill = new Fill(Color.LightBlue);
-            barCash = myPane.AddBar("现金", list2, Color.Blue);
+            BarItem barCash = myPane.AddBar("现金", cash, Color.Blue);
             barCash.Bar.Fill = new Fill(Color.Gold);
 
             zedGraph.AxisChange();
 
-            // add outview data
-            barInvest.AddPoint(3, 250);
-            barCash.AddPoint(3, 40);
-
             // Create TextObj's to provide labels for each bar
-
             CreateBarLabels(myPane, true, "N0");
+
+            zedGraph.Refresh();
         }
 
         private void Form1_SizeChanged(object sender, EventArgs e)
@@ -183,10 +295,11 @@ namespace ThePool
                 }
             }
         }     
-      
 
         private void CreateBarLabels(GraphPane pane, bool isBarCenter, string valueFormat)
         {
+            pane.GraphObjList.Clear();
+
             bool isVertical = pane.BarSettings.Base == BarBase.X;
 
             // Make the gap between the bars and the labels = 2% of the axis range
@@ -279,7 +392,7 @@ namespace ThePool
 
         private void dateTimePicker_year_ValueChanged(object sender, EventArgs e)
         {
-
+            Reload();
         }
 
         private void button_pre_Click(object sender, EventArgs e)

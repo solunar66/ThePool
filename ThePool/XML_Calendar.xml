@@ -3,7 +3,7 @@
   <Year value="">
     <Month value="">
       <Day value="">
-        <flow type="" volume="" partner="" project="" comment=""/>
+        <flow type="" volume="" comment=""/>
       </Day>
     </Month>
   </Year>

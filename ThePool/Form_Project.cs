@@ -52,7 +52,7 @@ namespace ThePool
                     textBox_contact.Text = project.contact;
                     textBox_phone.Text = project.telephone;
                     textBox_comment.Text = project.comment;
-                    numericUpDown_volume.Value = project.volume;
+                    numericUpDown_volume.Value = (decimal)project.volume;
                     numericUpDown_rate.Value = (decimal)project.rate;
                     comboBox_cycle.SelectedIndex = (int)project.cycle;
                     dateTimePicker_start.Value = project.start;

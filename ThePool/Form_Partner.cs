@@ -165,17 +165,17 @@ namespace ThePool
                 if (row.Cells[0].Value != null && row.Cells[1] != null && row.Cells[2].Value != null)
                 {
                     Fund fund = new Fund();
-                    fund.volume = int.Parse(row.Cells[0].Value.ToString());
+                    fund.volume = float.Parse(row.Cells[0].Value.ToString());
                     fund.rate = float.Parse(row.Cells[1].Value.ToString());
-                    if (row.Cells[2].Value.ToString() == "未定义")
+                    if (row.Cells[2].Value.ToString() == "0")
                     { fund.cycle = Cycle.undefined; }
-                    else if(row.Cells[2].Value.ToString() == "每月")
+                    else if(row.Cells[2].Value.ToString() == "1")
                     { fund.cycle = Cycle.monthly; }
-                    else if(row.Cells[2].Value.ToString() == "每季度")
+                    else if(row.Cells[2].Value.ToString() == "2")
                     { fund.cycle = Cycle.seasonly; }
-                    else if (row.Cells[2].Value.ToString() == "每半年")
+                    else if (row.Cells[2].Value.ToString() == "3")
                     { fund.cycle = Cycle.halfyearly; }
-                    else if (row.Cells[2].Value.ToString() == "每年")
+                    else if (row.Cells[2].Value.ToString() == "4")
                     { fund.cycle = Cycle.yearly; }
                     else
                     { fund.cycle = Cycle.undefined; }

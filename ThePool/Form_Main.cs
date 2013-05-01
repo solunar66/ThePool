@@ -82,8 +82,8 @@ namespace ThePool
             int intervel;
             // base:    partners' money
             // invest:  projects' money
-            int baseMoney = 0;
-            int baseInvest = 0;
+            float baseMoney = 0;
+            float baseInvest = 0;
             // income:  projects' interest
             float projInterest = 0;
             // payout:  partners' interest
@@ -128,7 +128,7 @@ namespace ThePool
                                         case Cycle.yearly: intervel = 12; break;
                                         default: intervel = 0; break;
                                     }
-                                    parInterest += fund.volume * (fund.rate / intervel) * ((int)((end.Year - fund.start.Year) * 12 + end.Month - fund.start.Month) / intervel);
+                                    parInterest += fund.volume * (fund.rate * intervel / 12) * ((int)((end.Year - fund.start.Year) * 12 + end.Month - fund.start.Month) / intervel);
                                 }
                             }
                         }
@@ -154,7 +154,7 @@ namespace ThePool
                                 case Cycle.yearly: intervel = 12; break;
                                 default: intervel = 0; break;
                             }
-                            parInterest += project.volume * (project.rate / intervel) * ((int)((end.Year - project.start.Year) * 12 + end.Month - project.start.Month) / intervel);
+                            projInterest += project.volume * (project.rate * intervel / 12) * ((int)((end.Year - project.start.Year) * 12 + end.Month - project.start.Month) / intervel);
                         }
                     }
                 }
@@ -235,7 +235,6 @@ namespace ThePool
             button_quit.Location = new Point(Width - 128, Height - 76);
         }
 
-
         private void button_quit_Click(object sender, EventArgs e)
         {
             Close();
@@ -289,8 +288,7 @@ namespace ThePool
                 myPane.FindNearestPoint(new PointF(e.X, e.Y), out tmpCurve, out tmpNearest);
                 if (tmpCurve != null && tmpNearest != -1)
                 {
-                    XDate today = ((XDate)tmpCurve[tmpNearest].X);
-                    Form_Calendar calendar = new Form_Calendar(today.DateTime);
+                    Form_Calendar calendar = new Form_Calendar(new DateTime(dateTimePicker_year.Value.Year, (int)tmpCurve[tmpNearest].X, 1));
                     calendar.ShowDialog();
                 }
             }

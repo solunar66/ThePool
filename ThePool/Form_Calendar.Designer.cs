@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.groupBox_info = new System.Windows.Forms.GroupBox();
             this.dataGridView_info = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -36,8 +38,8 @@
             this.button_quit = new System.Windows.Forms.Button();
             this.button_save = new System.Windows.Forms.Button();
             this.flowLayoutPanel_out = new System.Windows.Forms.FlowLayoutPanel();
-            this.flowLayoutPanel_in = new System.Windows.Forms.FlowLayoutPanel();
             this.label_out = new System.Windows.Forms.Label();
+            this.flowLayoutPanel_in = new System.Windows.Forms.FlowLayoutPanel();
             this.label_in = new System.Windows.Forms.Label();
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -129,6 +131,16 @@
             this.flowLayoutPanel_out.Size = new System.Drawing.Size(370, 18);
             this.flowLayoutPanel_out.TabIndex = 2;
             // 
+            // label_out
+            // 
+            this.label_out.AutoSize = true;
+            this.label_out.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label_out.Location = new System.Drawing.Point(3, 0);
+            this.label_out.Name = "label_out";
+            this.label_out.Size = new System.Drawing.Size(84, 12);
+            this.label_out.TabIndex = 0;
+            this.label_out.Text = "本月支出日: ";
+            // 
             // flowLayoutPanel_in
             // 
             this.flowLayoutPanel_in.Anchor = System.Windows.Forms.AnchorStyles.Left;
@@ -143,16 +155,6 @@
             this.flowLayoutPanel_in.Size = new System.Drawing.Size(370, 18);
             this.flowLayoutPanel_in.TabIndex = 2;
             // 
-            // label_out
-            // 
-            this.label_out.AutoSize = true;
-            this.label_out.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label_out.Location = new System.Drawing.Point(3, 0);
-            this.label_out.Name = "label_out";
-            this.label_out.Size = new System.Drawing.Size(84, 12);
-            this.label_out.TabIndex = 0;
-            this.label_out.Text = "本月支出日: ";
-            // 
             // label_in
             // 
             this.label_in.AutoSize = true;
@@ -165,6 +167,8 @@
             // 
             // dataGridViewTextBoxColumn1
             // 
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridViewTextBoxColumn1.HeaderText = "金额(万)";
             this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
             this.dataGridViewTextBoxColumn1.Width = 80;
@@ -186,6 +190,8 @@
             // 
             // Column_volume
             // 
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.Column_volume.DefaultCellStyle = dataGridViewCellStyle1;
             this.Column_volume.HeaderText = "金额(万)";
             this.Column_volume.Name = "Column_volume";
             this.Column_volume.Width = 80;

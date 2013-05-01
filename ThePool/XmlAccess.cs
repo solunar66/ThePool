@@ -30,7 +30,7 @@ namespace ThePool
     
     public struct Fund
     {
-        public int volume;
+        public float volume;
         public float rate;
         public Cycle cycle;
         public DateTime start;
@@ -51,7 +51,7 @@ namespace ThePool
         public string name;
         public string contact;
         public string telephone;
-        public int volume;
+        public float volume;
         public float rate;
         public Cycle cycle;
         public DateTime start;
@@ -100,7 +100,7 @@ namespace ThePool
                 foreach (XmlNode fund in partner.ChildNodes)
                 {
                     Fund f = new Fund();
-                    f.volume = int.Parse(fund.Attributes["volume"].Value);
+                    f.volume = float.Parse(fund.Attributes["volume"].Value);
                     f.rate = float.Parse(fund.Attributes["rate"].Value);
                     f.cycle = (Cycle)Enum.ToObject(typeof(Cycle), byte.Parse(fund.Attributes["cycle"].Value));
                     f.start = DateTime.Parse(fund.Attributes["start"].Value);
@@ -156,7 +156,7 @@ namespace ThePool
                 proj.name = project.Attributes["name"].Value;
                 proj.contact = project.Attributes["contact"].Value;
                 proj.telephone = project.Attributes["telephone"].Value;
-                proj.volume = int.Parse(project.Attributes["volume"].Value);
+                proj.volume = float.Parse(project.Attributes["volume"].Value);
                 proj.rate = float.Parse(project.Attributes["rate"].Value);
                 proj.cycle = (Cycle)(Enum.ToObject(typeof(Cycle), byte.Parse(project.Attributes["cycle"].Value)));
                 proj.start = DateTime.Parse(project.Attributes["start"].Value);
@@ -273,35 +273,53 @@ namespace ThePool
 
         public static void UpdateCalendar(string file, ArrayList calendars)
         {
-            if (calendars.Count == 0) return;
-
             XmlDocument xml = new XmlDocument();
             xml.Load(file);
             XmlNode root = xml.SelectSingleNode("Calendar");
+            root.RemoveAll();
 
-            foreach (XmlNode year in root.ChildNodes)
+            foreach (Calendar calendar in calendars)
             {
-                if (int.Parse(year.Attributes["value"].Value) == ((Calendar)calendars[0]).date.Year)
+                XmlNode year = null;
+                foreach (XmlNode nodeYear in root.ChildNodes)
                 {
-                    foreach (XmlNode month in year.ChildNodes)
-                    {
-                        if (int.Parse(month.Attributes["value"].Value) == ((Calendar)calendars[0]).date.Month)
-                        {
-                            month.RemoveAll();
-                            foreach (Calendar calendar in calendars)
-                            {
-                                XmlNode c = AppendElement(month, "day");
-                                SetAttribute(c, "value", calendar.date.Day.ToString());
-                                foreach (Flow flow in calendar.flows)
-                                {
-                                    XmlNode f = AppendElement(c, "flow");
-                                    SetAttribute(f, "type", ((int)flow.type).ToString());
-                                    SetAttribute(f, "volume", flow.volume.ToString());
-                                    SetAttribute(f, "comment", flow.comment);
-                                }
-                            }
-                        }
-                    }
+                    if (nodeYear.Attributes["value"].Value == calendar.date.Year.ToString()) year = nodeYear; break;
+                }
+                if (year == null)
+                {
+                    year = AppendElement(root, "Year");
+                    SetAttribute(year, "value", calendar.date.Year.ToString()); 
+                }
+
+                XmlNode month = null;
+                foreach (XmlNode nodeMonth in year.ChildNodes)
+                {
+                    if (nodeMonth.Attributes["value"].Value == calendar.date.Month.ToString()) month = nodeMonth; break;
+                }
+                if (month == null)
+                {
+                    month = AppendElement(year, "Month");
+                    SetAttribute(month, "value", calendar.date.Month.ToString());
+                }
+
+                XmlNode day = null;
+                foreach (XmlNode nodeDay in month.ChildNodes)
+                {
+                    if (nodeDay.Attributes["value"].Value == calendar.date.Day.ToString()) day = nodeDay; break;
+                }
+                if (day == null)
+                {
+                    day = AppendElement(month, "Day");
+                }
+
+                day.RemoveAll();
+                SetAttribute(day, "value", calendar.date.Day.ToString());
+                foreach (Flow flow in calendar.flows)
+                {
+                    XmlNode flowNode = AppendElement(day, "Flow");
+                    SetAttribute(flowNode, "type", ((int)flow.type).ToString());
+                    SetAttribute(flowNode, "volume", flow.volume.ToString());
+                    SetAttribute(flowNode, "comment", flow.comment);
                 }
             }
 

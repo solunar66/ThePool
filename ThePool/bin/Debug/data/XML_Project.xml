@@ -1,4 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Projects>
-  <project name="华创小贷" contact="华创联系人" telephone="13813811111" volume="200" rate="0.18" cycle="2" start="2013/1/1" end="2014/1/1" comment="华创备注" />
+  <project name="韩" contact="" telephone="" volume="380" rate="0.15" cycle="1" start="2013/5/1" end="2100/5/1" comment="" />
+  <project name="恒盛 @ 3" contact="" telephone="" volume="160" rate="0.15" cycle="1" start="2013/5/3" end="2100/5/3" comment="" />
+  <project name="恒盛 @ 17" contact="" telephone="" volume="60" rate="0.15" cycle="1" start="2013/5/17" end="2100/5/17" comment="" />
+  <project name="华创 @ 1" contact="" telephone="" volume="70" rate="0.15" cycle="1" start="2013/5/1" end="2100/5/1" comment="" />
+  <project name="华创 @ 11" contact="" telephone="" volume="190" rate="0.15" cycle="1" start="2013/5/11" end="2100/5/11" comment="" />
+  <project name="关威" contact="" telephone="" volume="100" rate="0.24" cycle="1" start="2013/6/10" end="2100/6/10" comment="" />
+  <project name="恒盛 @ 201308" contact="" telephone="" volume="30" rate="0.15" cycle="1" start="2013/8/1" end="2100/8/1" comment="新增p2p" />
+  <project name="恒盛 @ 201306" contact="" telephone="" volume="70" rate="0.15" cycle="1" start="2013/6/20" end="2100/6/20" comment="新增p2p" />
+  <project name="恒盛 @ 201310" contact="" telephone="" volume="20" rate="0.15" cycle="1" start="2013/10/1" end="2100/10/1" comment="新增p2p" />
+  <project name="恒盛 @ 201312" contact="" telephone="" volume="20" rate="0.15" cycle="1" start="2013/12/1" end="2100/12/1" comment="新增p2p" />
 </Projects>

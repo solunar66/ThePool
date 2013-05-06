@@ -45,12 +45,12 @@
             this.button_load = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.button_quit = new System.Windows.Forms.Button();
-            this.Column_cycle = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column_volume = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column_rate = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_cycle = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Column_comment = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_volume)).BeginInit();
             this.groupbox_info.SuspendLayout();
@@ -174,7 +174,7 @@
             // textBox_name
             // 
             this.textBox_name.Location = new System.Drawing.Point(6, 41);
-            this.textBox_name.MaxLength = 8;
+            this.textBox_name.MaxLength = 16;
             this.textBox_name.Name = "textBox_name";
             this.textBox_name.Size = new System.Drawing.Size(100, 21);
             this.textBox_name.TabIndex = 2;
@@ -242,21 +242,6 @@
             this.button_quit.UseVisualStyleBackColor = true;
             this.button_quit.Click += new System.EventHandler(this.button_quit_Click);
             // 
-            // Column_cycle
-            // 
-            this.Column_cycle.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
-            this.Column_cycle.HeaderText = "付息周期";
-            this.Column_cycle.Items.AddRange(new object[] {
-            "不定期",
-            "每月",
-            "每季度",
-            "每半年",
-            "每年"});
-            this.Column_cycle.Name = "Column_cycle";
-            this.Column_cycle.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Column_cycle.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.Column_cycle.Width = 80;
-            // 
             // dataGridViewTextBoxColumn1
             // 
             this.dataGridViewTextBoxColumn1.HeaderText = "资金(万)";
@@ -283,15 +268,30 @@
             // 
             // Column_rate
             // 
-            this.Column_rate.HeaderText = "利率";
+            this.Column_rate.HeaderText = "年化利率";
             this.Column_rate.Name = "Column_rate";
-            this.Column_rate.Width = 60;
+            this.Column_rate.Width = 80;
+            // 
+            // Column_cycle
+            // 
+            this.Column_cycle.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
+            this.Column_cycle.HeaderText = "付息周期";
+            this.Column_cycle.Items.AddRange(new object[] {
+            "不定期",
+            "每月",
+            "每季度",
+            "每半年",
+            "每年"});
+            this.Column_cycle.Name = "Column_cycle";
+            this.Column_cycle.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Column_cycle.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.Column_cycle.Width = 80;
             // 
             // Column_comment
             // 
             this.Column_comment.HeaderText = "备注";
             this.Column_comment.Name = "Column_comment";
-            this.Column_comment.Width = 150;
+            this.Column_comment.Width = 300;
             // 
             // Form_Partner
             // 
@@ -343,12 +343,12 @@
         private System.Windows.Forms.Button button_quit;
         private System.Windows.Forms.Button button_eject;
         private System.Windows.Forms.Button button_inject;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_volume;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_rate;
         private System.Windows.Forms.DataGridViewComboBoxColumn Column_cycle;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_comment;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
     }
 }

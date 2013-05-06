@@ -24,14 +24,14 @@ namespace ThePool
     public struct Flow
     {
         public FlowType type;
-        public float volume;
+        public double volume;
         public string comment;
     }
     
     public struct Fund
     {
-        public float volume;
-        public float rate;
+        public double volume;
+        public double rate;
         public Cycle cycle;
         public DateTime start;
         public DateTime end;
@@ -51,8 +51,8 @@ namespace ThePool
         public string name;
         public string contact;
         public string telephone;
-        public float volume;
-        public float rate;
+        public double volume;
+        public double rate;
         public Cycle cycle;
         public DateTime start;
         public DateTime end;
@@ -62,7 +62,7 @@ namespace ThePool
     public struct Debt
     {
         public string name;
-        public float volume;
+        public double volume;
         public Cycle cycle;
         public string comment;
         public DateTime start;
@@ -100,8 +100,8 @@ namespace ThePool
                 foreach (XmlNode fund in partner.ChildNodes)
                 {
                     Fund f = new Fund();
-                    f.volume = float.Parse(fund.Attributes["volume"].Value);
-                    f.rate = float.Parse(fund.Attributes["rate"].Value);
+                    f.volume = double.Parse(fund.Attributes["volume"].Value);
+                    f.rate = double.Parse(fund.Attributes["rate"].Value);
                     f.cycle = (Cycle)Enum.ToObject(typeof(Cycle), byte.Parse(fund.Attributes["cycle"].Value));
                     f.start = DateTime.Parse(fund.Attributes["start"].Value);
                     f.end = DateTime.Parse(fund.Attributes["end"].Value);
@@ -156,8 +156,8 @@ namespace ThePool
                 proj.name = project.Attributes["name"].Value;
                 proj.contact = project.Attributes["contact"].Value;
                 proj.telephone = project.Attributes["telephone"].Value;
-                proj.volume = float.Parse(project.Attributes["volume"].Value);
-                proj.rate = float.Parse(project.Attributes["rate"].Value);
+                proj.volume = double.Parse(project.Attributes["volume"].Value);
+                proj.rate = double.Parse(project.Attributes["rate"].Value);
                 proj.cycle = (Cycle)(Enum.ToObject(typeof(Cycle), byte.Parse(project.Attributes["cycle"].Value)));
                 proj.start = DateTime.Parse(project.Attributes["start"].Value);
                 proj.end = DateTime.Parse(project.Attributes["end"].Value);
@@ -204,7 +204,7 @@ namespace ThePool
             {
                 Debt d = new Debt();
                 d.name = debt.Attributes["name"].Value;
-                d.volume = float.Parse(debt.Attributes["volume"].Value);
+                d.volume = double.Parse(debt.Attributes["volume"].Value);
                 d.cycle = (Cycle)(Enum.ToObject(typeof(Cycle), byte.Parse(debt.Attributes["cycle"].Value)));
                 d.start = DateTime.Parse(debt.Attributes["start"].Value);
                 d.end = DateTime.Parse(debt.Attributes["end"].Value);
@@ -259,10 +259,11 @@ namespace ThePool
                         {
                             Flow f = new Flow();
                             f.type = (FlowType)(Enum.ToObject(typeof(FlowType), byte.Parse(flow.Attributes["type"].Value)));
-                            f.volume = float.Parse(flow.Attributes["volume"].Value);
+                            f.volume = double.Parse(flow.Attributes["volume"].Value);
                             f.comment = flow.Attributes["comment"].Value;
                             calendar.flows.Add(f);
                         }
+                        // filter for empty day
                         if (calendar.flows.Count > 0) calendars.Add(calendar);
                     }
                 }
@@ -283,7 +284,11 @@ namespace ThePool
                 XmlNode year = null;
                 foreach (XmlNode nodeYear in root.ChildNodes)
                 {
-                    if (nodeYear.Attributes["value"].Value == calendar.date.Year.ToString()) year = nodeYear; break;
+                    if (nodeYear.Attributes["value"].Value == calendar.date.Year.ToString())
+                    {
+                        year = nodeYear;
+                        break;
+                    }
                 }
                 if (year == null)
                 {
@@ -294,7 +299,11 @@ namespace ThePool
                 XmlNode month = null;
                 foreach (XmlNode nodeMonth in year.ChildNodes)
                 {
-                    if (nodeMonth.Attributes["value"].Value == calendar.date.Month.ToString()) month = nodeMonth; break;
+                    if (nodeMonth.Attributes["value"].Value == calendar.date.Month.ToString())
+                    {
+                        month = nodeMonth;
+                        break;
+                    }
                 }
                 if (month == null)
                 {
@@ -305,7 +314,11 @@ namespace ThePool
                 XmlNode day = null;
                 foreach (XmlNode nodeDay in month.ChildNodes)
                 {
-                    if (nodeDay.Attributes["value"].Value == calendar.date.Day.ToString()) day = nodeDay; break;
+                    if (nodeDay.Attributes["value"].Value == calendar.date.Day.ToString())
+                    {
+                        day = nodeDay;
+                        break;
+                    }
                 }
                 if (day == null)
                 {

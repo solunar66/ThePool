@@ -15,6 +15,7 @@ namespace ThePool
         ChinaDateControl dateControl = new ChinaDateControl();
 
         DateTime toMonth;
+        DateTime currentDate;
 
         List<Calendar> monthInfo = new List<Calendar>();
 
@@ -52,17 +53,23 @@ namespace ThePool
 
             Text = "                                      "
                  + "------ " + today.Year.ToString() + "年" + today.Month.ToString() + "月" + " ------";
+
+            currentDate = new DateTime(1000, 1, 1);
         }
 
         private void dateControl_MouseDown(object sender, MouseEventArgs e)
         {
-            groupBox_info.Text = dateControl.CurrentDateTime.ToShortDateString();
+            DateTime curDate;
+            if (currentDate.Year != 1000) { curDate = currentDate; currentDate = new DateTime(1000, 1, 1); }
+            else curDate = dateControl.CurrentDateTime;
+
+            groupBox_info.Text = curDate.ToShortDateString();
             dataGridView_info.Rows.Clear();
 
             // find and display the info of the day
             foreach (Calendar calendar in monthInfo)
             {
-                if (calendar.date == dateControl.CurrentDateTime)
+                if (calendar.date == curDate)
                 {
                     dataGridView_info.Rows.Add();
                     (dataGridView_info.Rows[dataGridView_info.Rows.Count - 2].Cells[0] as DataGridViewComboBoxCell).DataSource = dsType.Tables[0];
@@ -76,7 +83,7 @@ namespace ThePool
             }
             foreach (Calendar calendar in Form_Main.ar_Calendars)
             {
-                if (calendar.date == dateControl.CurrentDateTime)
+                if (calendar.date == curDate)
                 {
                     foreach (Flow flow in calendar.flows)
                     {
@@ -117,7 +124,12 @@ namespace ThePool
 
         private void ToolStripMenuItem_delete_Click(object sender, EventArgs e)
         {
-            if (dataGridView_info.SelectedRows[0].ReadOnly || dataGridView_info.SelectedRows[0].IsNewRow) return;
+            if (dataGridView_info.SelectedRows[0].IsNewRow) return;
+            if (dataGridView_info.SelectedRows[0].ReadOnly)
+            {
+                MessageBox.Show("股东付息或投资收益不可直接删除！请编辑股东或投资信息！", "删除失败", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
             dataGridView_info.Rows.Remove(dataGridView_info.SelectedRows[0]);
         }
 
@@ -166,7 +178,7 @@ namespace ThePool
                                 c.flows = new ArrayList();
                                 Flow flow = new Flow();
                                 flow.type = FlowType.payout;
-                                flow.volume = fund.volume * fund.rate * 12 / intervel;
+                                flow.volume = fund.volume * fund.rate * intervel / 12f;
                                 flow.comment = "股东\"" + partner.name + "\"资金(" + fund.volume + "万)结息";
                                 c.flows.Add(flow);
                                 monthInfo.Add(c);
@@ -199,7 +211,7 @@ namespace ThePool
                             c.flows = new ArrayList();
                             Flow flow = new Flow();
                             flow.type = FlowType.income;
-                            flow.volume = project.volume * project.rate * 12 / intervel;
+                            flow.volume = project.volume * project.rate * intervel / 12f;
                             flow.comment = "投资\"" + project.name + "\"资金(" + project.volume + "万)结息";
                             c.flows.Add(flow);
                             monthInfo.Add(c);
@@ -240,27 +252,33 @@ namespace ThePool
                 }
             }
 
+            bool exist = false;
+
             foreach (Calendar calendar in monthInfo)
             {
                 Label label = new Label();
                 label.AutoSize = true;
                 label.Text = calendar.date.Day.ToString();
+                label.Cursor = Cursors.Hand;
+                label.Click += new EventHandler(l_Click);
                 if (((Flow)calendar.flows[0]).type == FlowType.income)
                 {
+                    exist = false;
                     foreach (Label l in flowLayoutPanel_in.Controls)
                     {
-                        if (l.Text == label.Text) return;
+                        if (l.Text == label.Text) exist = true;
                     }
-                    flowLayoutPanel_in.Controls.Add(label);
+                    if (!exist) flowLayoutPanel_in.Controls.Add(label);
                     
                 }
                 else if (((Flow)calendar.flows[0]).type == FlowType.payout)
                 {
+                    exist = false;
                     foreach (Label l in flowLayoutPanel_out.Controls)
                     {
-                        if (l.Text == label.Text) return;
+                        if (l.Text == label.Text) exist = true;
                     }
-                    flowLayoutPanel_out.Controls.Add(label);
+                    if (!exist) flowLayoutPanel_out.Controls.Add(label);
                 }
                 else { }
             }
@@ -275,21 +293,25 @@ namespace ThePool
                         l.ForeColor = Color.Blue;
                         l.AutoSize = true;
                         l.Text = calendar.date.Day.ToString();
+                        l.Cursor = Cursors.Hand;
+                        l.Click += new EventHandler(l_Click);
                         if (flow.type == FlowType.income)
                         {
+                            exist = false;
                             foreach (Label l_in in flowLayoutPanel_in.Controls)
                             {
-                                if (l_in.Text == l.Text) return;
+                                if (l_in.Text == l.Text) exist = true;
                             }
-                            flowLayoutPanel_in.Controls.Add(l);
+                            if (!exist) flowLayoutPanel_in.Controls.Add(l);
                         }
                         else if (flow.type == FlowType.payout)
                         {
+                            exist = false;
                             foreach (Label l_out in flowLayoutPanel_out.Controls)
                             {
-                                if (l_out.Text == l.Text) return;
+                                if (l_out.Text == l.Text) exist = true;
                             }
-                            flowLayoutPanel_out.Controls.Add(l);
+                            if (!exist) flowLayoutPanel_out.Controls.Add(l);
                         }
                         else { }
                     }
@@ -297,17 +319,23 @@ namespace ThePool
             }
         }
 
+        private void l_Click(object sender, EventArgs e)
+        {
+            currentDate = new DateTime(toMonth.Year, toMonth.Month, int.Parse(((Label)sender).Text));
+            dateControl_MouseDown(null, null);
+        }
+
         private void button_save_Click(object sender, EventArgs e)
         {
             Calendar calendar = new Calendar();
-            calendar.date = dateControl.CurrentDateTime;
+            calendar.date = DateTime.Parse(groupBox_info.Text);
             calendar.flows = new ArrayList();
             foreach (DataGridViewRow row in dataGridView_info.Rows)
             {
                 if (!row.ReadOnly && !row.IsNewRow && row.Cells[0].Value != null && row.Cells[1].Value != null)
                 {
-                    float volume;
-                    if (!float.TryParse(row.Cells[1].Value.ToString(), out volume))
+                    double volume;
+                    if (!double.TryParse(row.Cells[1].Value.ToString(), out volume))
                     {
                         MessageBox.Show("输入数据异常!", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
@@ -315,7 +343,7 @@ namespace ThePool
                     else
                     {
                         Flow flow = new Flow();
-                        flow.type = row.Cells[0].Value.ToString() == "0" ? FlowType.income : FlowType.payout;
+                        flow.type = ((DataGridViewComboBoxCell)row.Cells[0]).Value.ToString() == "0" ? FlowType.income : FlowType.payout;
                         flow.volume = volume;
                         flow.comment = row.Cells[2].Value == null ? "" : row.Cells[2].Value.ToString();
                         calendar.flows.Add(flow);

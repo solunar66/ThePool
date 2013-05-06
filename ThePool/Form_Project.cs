@@ -43,6 +43,11 @@ namespace ThePool
 
         private void button_load_Click(object sender, EventArgs e)
         {
+            if (listBox_name.SelectedItem == null)
+            {
+                MessageBox.Show("请在左侧列表中选择要显示的项目名称", "请选择项目", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             Clear();
             foreach (Project project in Form_Main.ar_Projects)
             {
@@ -103,13 +108,20 @@ namespace ThePool
 
         private void button_save_Click(object sender, EventArgs e)
         {
+            if (textBox_name.Text == "" || numericUpDown_volume.Value == 0 || numericUpDown_rate.Value == 0)
+            {
+                MessageBox.Show("请输入完整项目信息!", "保存项目", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                textBox_name.Focus();
+                return;
+            }
+
             Project proj = new Project();
             proj.name = textBox_name.Text;
             proj.contact = textBox_contact.Text;
             proj.telephone = textBox_phone.Text;
             proj.comment = textBox_comment.Text;
             proj.volume = (int)numericUpDown_volume.Value;
-            proj.rate = (float)numericUpDown_rate.Value;
+            proj.rate = (double)numericUpDown_rate.Value;
             proj.cycle = (Cycle)Enum.ToObject(typeof(Cycle), byte.Parse(comboBox_cycle.SelectedIndex.ToString()));
             proj.start = dateTimePicker_start.Value;
             proj.end = dateTimePicker_end.Value;

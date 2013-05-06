@@ -97,10 +97,17 @@ namespace ThePool
 
         private void button_save_Click(object sender, EventArgs e)
         {
+            if (textBox_name.Text == "" || numericUpDown_volume.Value == 0)
+            {
+                MessageBox.Show("请输入完整负债信息!", "保存负债", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                textBox_name.Focus();
+                return;
+            }
+
             Debt debt = new Debt();
             debt.name = textBox_name.Text;
             debt.comment = textBox_comment.Text;
-            debt.volume = (float)numericUpDown_volume.Value;
+            debt.volume = (double)numericUpDown_volume.Value;
             debt.cycle = (Cycle)Enum.ToObject(typeof(Cycle), byte.Parse(comboBox_cycle.SelectedIndex.ToString()));
             debt.start = dateTimePicker_start.Value;
             debt.end = dateTimePicker_end.Value;

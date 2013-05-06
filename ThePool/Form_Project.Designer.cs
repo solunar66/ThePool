@@ -32,9 +32,6 @@
             this.dateTimePicker_end = new System.Windows.Forms.DateTimePicker();
             this.dateTimePicker_start = new System.Windows.Forms.DateTimePicker();
             this.comboBox_cycle = new System.Windows.Forms.ComboBox();
-            this.button_delete = new System.Windows.Forms.Button();
-            this.button_new = new System.Windows.Forms.Button();
-            this.button_save = new System.Windows.Forms.Button();
             this.numericUpDown_volume = new System.Windows.Forms.NumericUpDown();
             this.numericUpDown_rate = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
@@ -50,6 +47,9 @@
             this.textBox_comment = new System.Windows.Forms.TextBox();
             this.textBox_contact = new System.Windows.Forms.TextBox();
             this.textBox_name = new System.Windows.Forms.TextBox();
+            this.button_delete = new System.Windows.Forms.Button();
+            this.button_new = new System.Windows.Forms.Button();
+            this.button_save = new System.Windows.Forms.Button();
             this.listBox_name = new System.Windows.Forms.ListBox();
             this.button_load = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
@@ -106,6 +106,7 @@
             // 
             // comboBox_cycle
             // 
+            this.comboBox_cycle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_cycle.FormattingEnabled = true;
             this.comboBox_cycle.Items.AddRange(new object[] {
             "不定期",
@@ -117,36 +118,6 @@
             this.comboBox_cycle.Name = "comboBox_cycle";
             this.comboBox_cycle.Size = new System.Drawing.Size(100, 20);
             this.comboBox_cycle.TabIndex = 6;
-            // 
-            // button_delete
-            // 
-            this.button_delete.Location = new System.Drawing.Point(108, 225);
-            this.button_delete.Name = "button_delete";
-            this.button_delete.Size = new System.Drawing.Size(91, 25);
-            this.button_delete.TabIndex = 5;
-            this.button_delete.Text = "删除项目";
-            this.button_delete.UseVisualStyleBackColor = true;
-            this.button_delete.Click += new System.EventHandler(this.button_delete_Click);
-            // 
-            // button_new
-            // 
-            this.button_new.Location = new System.Drawing.Point(11, 225);
-            this.button_new.Name = "button_new";
-            this.button_new.Size = new System.Drawing.Size(91, 25);
-            this.button_new.TabIndex = 5;
-            this.button_new.Text = "新建项目";
-            this.button_new.UseVisualStyleBackColor = true;
-            this.button_new.Click += new System.EventHandler(this.button_new_Click);
-            // 
-            // button_save
-            // 
-            this.button_save.Location = new System.Drawing.Point(413, 225);
-            this.button_save.Name = "button_save";
-            this.button_save.Size = new System.Drawing.Size(91, 25);
-            this.button_save.TabIndex = 5;
-            this.button_save.Text = "保存项目信息";
-            this.button_save.UseVisualStyleBackColor = true;
-            this.button_save.Click += new System.EventHandler(this.button_save_Click);
             // 
             // numericUpDown_volume
             // 
@@ -170,6 +141,11 @@
             0,
             131072});
             this.numericUpDown_rate.Location = new System.Drawing.Point(121, 90);
+            this.numericUpDown_rate.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.numericUpDown_rate.Name = "numericUpDown_rate";
             this.numericUpDown_rate.Size = new System.Drawing.Size(100, 21);
             this.numericUpDown_rate.TabIndex = 4;
@@ -198,9 +174,9 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(121, 73);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(41, 12);
+            this.label2.Size = new System.Drawing.Size(53, 12);
             this.label2.TabIndex = 3;
-            this.label2.Text = "回报率";
+            this.label2.Text = "年化利率";
             // 
             // label7
             // 
@@ -232,7 +208,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(104, 138);
+            this.label11.Location = new System.Drawing.Point(106, 138);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(17, 12);
             this.label11.TabIndex = 3;
@@ -283,10 +259,40 @@
             // textBox_name
             // 
             this.textBox_name.Location = new System.Drawing.Point(6, 41);
-            this.textBox_name.MaxLength = 8;
+            this.textBox_name.MaxLength = 32;
             this.textBox_name.Name = "textBox_name";
             this.textBox_name.Size = new System.Drawing.Size(100, 21);
             this.textBox_name.TabIndex = 2;
+            // 
+            // button_delete
+            // 
+            this.button_delete.Location = new System.Drawing.Point(108, 225);
+            this.button_delete.Name = "button_delete";
+            this.button_delete.Size = new System.Drawing.Size(91, 25);
+            this.button_delete.TabIndex = 5;
+            this.button_delete.Text = "删除项目";
+            this.button_delete.UseVisualStyleBackColor = true;
+            this.button_delete.Click += new System.EventHandler(this.button_delete_Click);
+            // 
+            // button_new
+            // 
+            this.button_new.Location = new System.Drawing.Point(11, 225);
+            this.button_new.Name = "button_new";
+            this.button_new.Size = new System.Drawing.Size(91, 25);
+            this.button_new.TabIndex = 5;
+            this.button_new.Text = "新建项目";
+            this.button_new.UseVisualStyleBackColor = true;
+            this.button_new.Click += new System.EventHandler(this.button_new_Click);
+            // 
+            // button_save
+            // 
+            this.button_save.Location = new System.Drawing.Point(413, 225);
+            this.button_save.Name = "button_save";
+            this.button_save.Size = new System.Drawing.Size(91, 25);
+            this.button_save.TabIndex = 5;
+            this.button_save.Text = "保存项目信息";
+            this.button_save.UseVisualStyleBackColor = true;
+            this.button_save.Click += new System.EventHandler(this.button_save_Click);
             // 
             // listBox_name
             // 

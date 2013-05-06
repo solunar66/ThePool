@@ -5,3 +5,8 @@
 1. calender form can list the in/out day of the month
 2. only user defined calendar comments will be stored, leave the generated ones
 3. issue about judge the payback cycle of date
+
+1. var tpye
+2. cal delete
+3. start date = current day
+4. force reload origin data xml

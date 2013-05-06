@@ -165,8 +165,8 @@ namespace ThePool
                 if (row.Cells[0].Value != null && row.Cells[1] != null && row.Cells[2].Value != null)
                 {
                     Fund fund = new Fund();
-                    fund.volume = float.Parse(row.Cells[0].Value.ToString());
-                    fund.rate = float.Parse(row.Cells[1].Value.ToString());
+                    fund.volume = double.Parse(row.Cells[0].Value.ToString());
+                    fund.rate = double.Parse(row.Cells[1].Value.ToString());
                     if (row.Cells[2].Value.ToString() == "0")
                     { fund.cycle = Cycle.undefined; }
                     else if(row.Cells[2].Value.ToString() == "1")

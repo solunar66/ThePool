@@ -18,6 +18,7 @@ namespace ThePool
         int ipt;
         object nearestObj;
         GraphPane tmpPane;
+        bool inBar;
 
         public static ArrayList ar_Partners, ar_Projects, ar_Debts, ar_Calendars;
         public static string file_Partners  = @"data/XML_Partner.xml";
@@ -42,9 +43,10 @@ namespace ThePool
             myPane = zedGraph.GraphPane;
 
             // Set the title and axis labels
-            myPane.Title.Text = "资金池(万)";
+            myPane.Title.Text = "资金池";
             myPane.XAxis.Title.Text = "日期 (点击柱状图显示详细信息)";
-            myPane.YAxis.Title.Text = "总量";
+            myPane.YAxis.Title.Text = "(万)";
+            myPane.YAxis.Title.FontSpec.Angle = 90;
             
             myPane.XAxis.Scale.MajorStep = 1;
             myPane.XAxis.Type = AxisType.Text;
@@ -82,16 +84,16 @@ namespace ThePool
             int intervel;
             // base:    partners' money
             // invest:  projects' money
-            float baseMoney = 0;
-            float baseInvest = 0;
+            double baseMoney = 0;
+            double baseInvest = 0;
             // income:  projects' interest
-            float projInterest = 0;
+            double projInterest = 0;
             // payout:  partners' interest
-            float parInterest = 0;
+            double parInterest = 0;
             // outcome: debts' money
-            float debtMoney = 0;
+            double debtMoney = 0;
             // adjust:  calendars' comment
-            float adjustMoney = 0;
+            double adjustMoney = 0;
 
             for (int i = 1; i <= 12; i++)
             {
@@ -154,7 +156,7 @@ namespace ThePool
                                 case Cycle.yearly: intervel = 12; break;
                                 default: intervel = 0; break;
                             }
-                            projInterest += project.volume * (project.rate * intervel / 12) * ((int)((end.Year - project.start.Year) * 12 + end.Month - project.start.Month) / intervel);
+                            projInterest += project.volume * (project.rate * intervel / 12f) * ((int)((end.Year - project.start.Year) * 12 + end.Month - project.start.Month) / intervel);
                         }
                     }
                 }
@@ -208,7 +210,7 @@ namespace ThePool
                         
             // degrees for horizontal bars
             myPane.XAxis.Scale.TextLabels = Xlabelslist.ToArray();
-            BarItem barInvest = myPane.AddBar("资产", invests, Color.Red);
+            BarItem barInvest = myPane.AddBar("已投资产", invests, Color.Red);
             barInvest.Bar.Fill = new Fill(Color.LightBlue);
             BarItem barCash = myPane.AddBar("现金", cash, Color.Blue);
             barCash.Bar.Fill = new Fill(Color.Gold);
@@ -216,7 +218,7 @@ namespace ThePool
             zedGraph.AxisChange();
 
             // Create TextObj's to provide labels for each bar
-            CreateBarLabels(myPane, true, "N0");
+            CreateBarLabels(myPane, true, "F3");
 
             zedGraph.Refresh();
         }
@@ -244,18 +246,21 @@ namespace ThePool
         {
             Form_Partner partner = new Form_Partner();
             partner.ShowDialog();
+            Reload();
         }
 
         private void button_invest_Click(object sender, EventArgs e)
         {
             Form_Project project = new Form_Project();
             project.ShowDialog();
+            Reload();
         }
 
         private void button_debt_Click(object sender, EventArgs e)
         {
             Form_Debt debt = new Form_Debt();
             debt.ShowDialog();
+            Reload();
         }
 
         private void zedGraph_MouseMove(object sender, MouseEventArgs e)
@@ -266,11 +271,13 @@ namespace ThePool
                 {
                     if (nearestObj is BarItem && ipt >= 0)
                     {
-                        zedGraph.Cursor = Cursors.Hand;                        
+                        //zedGraph.Cursor = Cursors.Hand;
+                        inBar = true;
                     }
                     else
                     {
-                        zedGraph.Cursor = Cursors.Default;
+                        //zedGraph.Cursor = Cursors.Default;
+                        inBar = false;
                     }
                 }
             }
@@ -278,7 +285,7 @@ namespace ThePool
 
         private void zedGraph_MouseClick(object sender, MouseEventArgs e)
         {
-            if (zedGraph.Cursor == Cursors.Hand)
+            if (/*zedGraph.Cursor == Cursors.Hand*/inBar)
             {
                 CurveItem tmpCurve;
                 int tmpNearest;
@@ -290,6 +297,7 @@ namespace ThePool
                 {
                     Form_Calendar calendar = new Form_Calendar(new DateTime(dateTimePicker_year.Value.Year, (int)tmpCurve[tmpNearest].X, 1));
                     calendar.ShowDialog();
+                    Reload();
                 }
             }
         }     
@@ -339,6 +347,7 @@ namespace ThePool
                         // Create a text label -- note that we have to go back to the original point
                         // data for this, since hiVal and lowVal could be "effective" values from a bar stack
                         string barLabelText = (isVertical ? points[i].Y : points[i].X).ToString(valueFormat);
+                        barLabelText = barLabelText.Replace(".000", "");
 
                         // Calculate the position of the label -- this is either the X or the Y coordinate
                         // depending on whether they are horizontal or vertical bars, respectively

@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Debts>
-  <debt name="生活费" volume="3" cycle="1" start="2013/1/1" end="2014/1/1" comment="每月生活费" />
+  <debt name="生活费" volume="0.6" cycle="1" start="2013/5/1" end="2100/5/1" comment="" />
+  <debt name="信用卡" volume="0.9" cycle="1" start="2013/6/30" end="2100/7/1" comment="" />
 </Debts>

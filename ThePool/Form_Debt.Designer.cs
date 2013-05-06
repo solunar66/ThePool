@@ -93,6 +93,7 @@
             // 
             // comboBox_cycle
             // 
+            this.comboBox_cycle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_cycle.FormattingEnabled = true;
             this.comboBox_cycle.Items.AddRange(new object[] {
             "不定期",

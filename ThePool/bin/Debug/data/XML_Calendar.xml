@@ -1,13 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Calendar>
   <Year value="2013">
-    <Month value="4">
-      <Day value="30">
-        <Flow type="0" volume="5" comment="test income" />
-        <Flow type="1" volume="1" comment="test payout" />
+    <Month value="6">
+      <Day value="1">
+        <Flow type="1" volume="4" comment="房租，信用卡" />
       </Day>
-      <Day value="29">
-        <Flow type="1" volume="1" comment="test" />
+    </Month>
+    <Month value="9">
+      <Day value="1">
+        <Flow type="1" volume="2.4" comment="房租" />
+        <Flow type="1" volume="1.5" comment="欣欣" />
+      </Day>
+    </Month>
+    <Month value="12">
+      <Day value="1">
+        <Flow type="1" volume="5.5" comment="车贷" />
+        <Flow type="1" volume="6" comment="还吕乐" />
+      </Day>
+    </Month>
+  </Year>
+  <Year value="2014">
+    <Month value="1">
+      <Day value="1">
+        <Flow type="1" volume="2" comment="房子首付" />
       </Day>
     </Month>
   </Year>

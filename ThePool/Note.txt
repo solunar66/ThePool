@@ -10,3 +10,8 @@
 2. cal delete
 3. start date = current day
 4. force reload origin data xml
+
+A. 每月添加备注：新加投资，自定义调整
+B. 月追加投资高亮显示
+C. 新建投资vs保存
+D. 更新投资=停止现有+新加投资

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,6 +11,13 @@ namespace ThePool
 {
     public partial class Main_Form : Form
     {
+        public ArrayList ar_Partners, ar_Projects, ar_Debts, ar_Calendars;
+
+        public string file_Partners  = @"data/XML_Partner.xml";
+        public string file_Projects  = @"data/XML_Project.xml";
+        public string file_Debts     = @"data/XML_Debt.xml";
+        public string file_Calendars = @"data/XML_Calendar.xml";
+
         DataGridView tempDGV;
 
         public Main_Form()
@@ -19,19 +27,213 @@ namespace ThePool
 
         private void Main_Form_Load(object sender, EventArgs e)
         {
-            for (int i = 0; i < 12; i++)
+            Reload();
+
+            //for (int i = 0; i < 12; i++)
+            //{
+            //    DataGridView dgv;
+            //    GenerateDGV("dgv" + i.ToString(), out dgv);
+            //    dgv.Rows[0].Cells[1].Value = "2013-" + (i + 1).ToString();
+            //    dgv.Rows[0].Cells[4].ToolTipText = "本月新投资A";
+            //    flowLayoutPanel1.Controls.Add(dgv);
+            //}
+        }
+
+        private void Reload()
+        {
+            flowLayoutPanel1.Controls.Clear();
+
+            ar_Partners  = Xml.LoadPartner(file_Partners);
+            ar_Projects  = Xml.LoadProject(file_Projects);
+            ar_Debts     = Xml.LoadDebt(file_Debts);
+            ar_Calendars = Xml.LoadCalendar(file_Calendars);
+
+            //
+            // To Do: the calculation
+            //
+            // for each month date
+            DateTime start, end;
+            // for interest payment calculation
+            int intervel;
+            // base:    partners' money
+            // invest:  projects' money
+            double baseMoney = 0;
+            double baseInvest = 0;
+            // income:  projects' interest
+            double projInterest = 0;
+            // payout:  partners' interest
+            double parInterest = 0;
+            // outcome: debts' money
+            double debtMoney = 0;
+            // adjust:  calendars' comment
+            double adjustMoney = 0;
+            string comment;
+
+            for (int i = 1; i <= 12; i++)
             {
                 DataGridView dgv;
-                GenerateDGV("dgv" + i.ToString(), out dgv);
-                dgv.Rows[0].Cells[1].Value = "2013-" + (i + 1).ToString();
-                dgv.Rows[0].Cells[4].ToolTipText = "本月新投资A";
+
+                baseMoney = 0;
+                baseInvest = 0;
+                projInterest = 0;
+                parInterest = 0;
+                debtMoney = 0;
+                adjustMoney = 0;
+                comment = "";
+
+                start = new DateTime(dateTimePicker_year.Value.Year, i, 1);
+                end = start.AddDays(1 - start.Day).AddMonths(1).AddDays(-1);
+
+                /* partners */
+                foreach (Partner partner in ar_Partners)
+                {
+                    foreach (Fund fund in partner.funds)
+                    {
+                        if (fund.start < end) // except future invest
+                        {
+                            if (fund.end < end) // finished interest
+                            {
+                                parInterest += fund.volume * (fund.rate / 12) * ((fund.end.Year - fund.start.Year) * 12 + fund.end.Month - fund.start.Month);
+                            }
+                            else
+                            {
+                                baseMoney += fund.volume; // current base money
+                                if (fund.cycle != Cycle.undefined) // undefined payback should be defined in calendar
+                                {
+                                    switch (fund.cycle)
+                                    {
+                                        case Cycle.monthly: intervel = 1; break;
+                                        case Cycle.seasonly: intervel = 3; break;
+                                        case Cycle.halfyearly: intervel = 6; break;
+                                        case Cycle.yearly: intervel = 12; break;
+                                        default: intervel = 0; break;
+                                    }
+                                    parInterest += fund.volume * (fund.rate * intervel / 12) * ((int)((end.Year - fund.start.Year) * 12 + end.Month - fund.start.Month) / intervel);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                /* projects */
+                foreach (Project project in ar_Projects)
+                {
+                    if (project.start < end)
+                    {
+                        if (project.start >= start)
+                        { comment += "新投资\"" + project.name + "\":" + project.volume.ToString() + "万; "; }
+                        if (project.end < end)
+                        {
+                            projInterest += project.volume * (project.rate / 12) * ((project.end.Year - project.start.Year) * 12 + project.end.Month - project.start.Month);
+                        }
+                        else
+                        {
+                            baseInvest += project.volume;
+                            switch (project.cycle)
+                            {
+                                case Cycle.monthly: intervel = 1; break;
+                                case Cycle.seasonly: intervel = 3; break;
+                                case Cycle.halfyearly: intervel = 6; break;
+                                case Cycle.yearly: intervel = 12; break;
+                                default: intervel = 0; break;
+                            }
+                            projInterest += project.volume * (project.rate * intervel / 12f) * ((int)((end.Year - project.start.Year) * 12 + end.Month - project.start.Month) / intervel);
+                        }
+                    }
+                }
+
+                /* debts */
+                foreach (Debt debt in ar_Debts)
+                {
+                    if (debt.start < end)
+                    {
+                        switch (debt.cycle)
+                        {
+                            case Cycle.monthly: intervel = 1; break;
+                            case Cycle.seasonly: intervel = 3; break;
+                            case Cycle.halfyearly: intervel = 6; break;
+                            case Cycle.yearly: intervel = 12; break;
+                            default: intervel = 0; break;
+                        }
+                        if (debt.end < end)
+                        {
+                            debtMoney += debt.volume * ((debt.end.Year - debt.start.Year) * 12 + debt.end.Month - debt.start.Month) / intervel;
+                        }
+                        else
+                        {
+                            debtMoney += debt.volume * ((int)((end.Year - debt.start.Year) * 12 + end.Month - debt.start.Month) / intervel);
+                        }
+                    }
+                }
+
+                /* calendar */
+                foreach (Calendar calendar in ar_Calendars)
+                {
+                    if (calendar.date <= end)
+                    {
+                        foreach (Flow flow in calendar.flows)
+                        {
+                            if (flow.type == FlowType.income)
+                            {
+                                adjustMoney += flow.volume;
+                                comment += "调整收入\"" + flow.comment + "\":" + flow.volume.ToString() + "万; ";
+                            }
+                            else if (flow.type == FlowType.payout)
+                            {
+                                adjustMoney -= flow.volume;
+                                comment += "调整支出\"" + flow.comment + "\":" + flow.volume.ToString() + "万; ";
+                            }
+                        }
+                    }
+                }
+
+                // sum all up
+                List<string> data = new List<string>();
+                // date
+                data.Add(dateTimePicker_year.Value.Year.ToString() + "-" + (i + 1).ToString().PadLeft(2, '0'));
+                // total
+                data.Add(baseMoney.ToString());
+                // cash
+                data.Add((baseMoney - baseInvest + projInterest - parInterest - debtMoney + adjustMoney).ToString("N2"));
+                // invest                
+                data.Add(baseInvest.ToString());
+                // payout
+                data.Add((parInterest + debtMoney).ToString());
+                // income
+                data.Add(projInterest.ToString());
+                // adjust
+                data.Add(adjustMoney.ToString());
+                // comment
+                data.Add(comment);
+                // debt
+                data.Add(debtMoney.ToString());
+
+                GenerateDGV(data, out dgv);
                 flowLayoutPanel1.Controls.Add(dgv);
             }
         }
 
-        private void GenerateDGV(string name, out DataGridView DGV)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data">
+        /// 0: current month : 201205
+        /// 1: total volume
+        /// 2: cash
+        /// 3: invest
+        /// 4: payout
+        /// 5: income
+        /// 6: adjust
+        /// 7: comment
+        /// 8: debt
+        /// </param>
+        /// <param name="DGV"></param>
+        private void GenerateDGV(List<string> data, out DataGridView DGV) 
         {
             DGV = new DataGridView();
+            DGV.Name = "DGV_"+data[0];
+            DGV.CellContentClick += new DataGridViewCellEventHandler(DGV_CellContentClick);
+            DGV.RowPrePaint += new DataGridViewRowPrePaintEventHandler(DGV_RowPrePaint);
 
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewButtonColumn Column_Header = new DataGridViewButtonColumn();
@@ -43,6 +245,7 @@ namespace ThePool
             DataGridViewTextBoxColumn Column_Payout = new DataGridViewTextBoxColumn();
             DataGridViewTextBoxColumn Column_Adjust = new DataGridViewTextBoxColumn();
             DataGridViewTextBoxColumn Column_Comment = new DataGridViewTextBoxColumn();
+            DataGridViewTextBoxColumn Column_Debt = new DataGridViewTextBoxColumn();
             // 
             // dataGridView
             // 
@@ -63,15 +266,14 @@ namespace ThePool
             Column_Income,
             Column_Payout,
             Column_Adjust,
-            Column_Comment});
+            Column_Comment,
+            Column_Debt});
             DGV.Location = new System.Drawing.Point(3, 3);
-            DGV.Name = name;
             DGV.ReadOnly = true;
             DGV.RowHeadersVisible = false;
             DGV.RowTemplate.Height = 23;
             DGV.Size = new System.Drawing.Size(1500, 60);
             DGV.TabIndex = 0;
-            DGV.CellContentClick += new DataGridViewCellEventHandler(DGV_CellContentClick);
             // 
             // Column_Header
             // 
@@ -87,7 +289,7 @@ namespace ThePool
             // 
             // Column_Date
             // 
-            Column_Date.HeaderText = "";
+            Column_Date.HeaderText = "日期";
             Column_Date.Name = "Column_Date";
             Column_Date.ReadOnly = true;
             Column_Date.Resizable = DataGridViewTriState.False;
@@ -152,9 +354,24 @@ namespace ThePool
             Column_Comment.ReadOnly = true;
             Column_Comment.SortMode = DataGridViewColumnSortMode.NotSortable;
             Column_Comment.Width = 1766;
+            //
+            // Column_Debt
+            // 
+            Column_Debt.HeaderText = "Debt";
+            Column_Debt.Name = "Column_Debt";
+            Column_Debt.Visible = false;
 
             DGV.Rows.Add();
             DGV.Rows[0].Cells[0].Value = "+";
+            DGV.Rows[0].Cells[1].Value = data[0];
+            DGV.Rows[0].Cells[2].Value = data[1];
+            DGV.Rows[0].Cells[3].Value = data[2];
+            DGV.Rows[0].Cells[4].Value = data[3];
+            DGV.Rows[0].Cells[5].Value = data[4];
+            DGV.Rows[0].Cells[6].Value = data[5];
+            DGV.Rows[0].Cells[7].Value = data[6];
+            DGV.Rows[0].Cells[8].Value = data[7];
+            DGV.Rows[0].Cells[9].Value = data[8];
         }
 
         private void GenerateGB(string name, out GroupBox GB)
@@ -651,6 +868,9 @@ namespace ThePool
             numericUpDown_cash.TextAlign = HorizontalAlignment.Center;
             numericUpDown_cash.InterceptArrowKeys = false;
             numericUpDown_cash.Maximum = 100000;
+            numericUpDown_cash.Minimum = -1000;
+            numericUpDown_cash.Increment = 0.01M;
+            numericUpDown_cash.DecimalPlaces = 2;
             // 
             // tabPage_invest
             // 
@@ -1191,13 +1411,13 @@ namespace ThePool
             // 
             Column_payout_day.HeaderText = "支出日";
             Column_payout_day.Name = "Column_payout_day";
-            Column_payout_day.Width = 65;
+            Column_payout_day.Width = 75;
             // 
             // Column_payout_volume
             // 
-            Column_payout_volume.HeaderText = "支出金额";
+            Column_payout_volume.HeaderText = "支出金额(万)";
             Column_payout_volume.Name = "Column_payout_volume";
-            Column_payout_volume.Width = 80;
+            Column_payout_volume.Width = 100;
             // 
             // Column_payout_comment
             // 
@@ -1218,7 +1438,7 @@ namespace ThePool
             Column_payout_day,
             Column_payout_volume,
             Column_payout_comment});
-            dataGridView_payout.CellMouseDown += new DataGridViewCellMouseEventHandler(dataGridView_CellMouseDown);
+            dataGridView_payout.MultiSelect = false;
             // 
             // button_savepayout
             // 
@@ -1268,13 +1488,13 @@ namespace ThePool
             // 
             Column_income_day.HeaderText = "收入日";
             Column_income_day.Name = "Column_income_day";
-            Column_income_day.Width = 65;
+            Column_income_day.Width = 75;
             // 
             // Column_income_volume
             // 
-            Column_income_volume.HeaderText = "收入金额";
+            Column_income_volume.HeaderText = "收入金额(万)";
             Column_income_volume.Name = "Column_income_volume";
-            Column_income_volume.Width = 80;
+            Column_income_volume.Width = 100;
             // 
             // Column_income_comment
             // 
@@ -1295,7 +1515,7 @@ namespace ThePool
             Column_income_day,
             Column_income_volume,
             Column_income_comment});
-            dataGridView_income.CellMouseDown += new DataGridViewCellMouseEventHandler(dataGridView_CellMouseDown);
+            dataGridView_income.MultiSelect = false;
             // 
             // button_saveincome
             // 
@@ -1339,7 +1559,6 @@ namespace ThePool
             ToolStripMenuItem_delete.Name = "ToolStripMenuItem_delete";
             ToolStripMenuItem_delete.Size = new Size(152, 22);
             ToolStripMenuItem_delete.Text = "删除";
-            ToolStripMenuItem_delete.Click += new EventHandler(ToolStripMenuItem_delete_Click);
             
             contextMenuStrip1.ResumeLayout(false);
             GB.ResumeLayout(false);
@@ -1373,18 +1592,56 @@ namespace ThePool
             ((System.ComponentModel.ISupportInitialize)(dataGridView_income)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(numericUpDown_income)).EndInit();
             ResumeLayout(false);
+
+            ToolStripMenuItem_delete.Click += new EventHandler(ToolStripMenuItem_delete_Click);
+            dataGridView_payout.CellMouseDown += new DataGridViewCellMouseEventHandler(dataGridView_CellMouseDown);
+            dataGridView_income.CellMouseDown += new DataGridViewCellMouseEventHandler(dataGridView_CellMouseDown);
+
+            button_new.Click += new EventHandler(button_new_Click);
+            button_save.Click += new EventHandler(button_save_Click);
+
+            listBox_invest.MouseDoubleClick += new MouseEventHandler(listBox_invent_MouseDoubleClick);
+            button_stopinvest.Click += new EventHandler(button_stopinvest_Click);
+            button_updateinvest.Click += new EventHandler(button_updateinvest_Click);
+
+            listBox_debt.MouseDoubleClick += new MouseEventHandler(listBox_debt_MouseDoubleClick);
+            button_newdebt.Click += new EventHandler(button_newdebt_Click);
+            button_stopdebt.Click += new EventHandler(button_stopdebt_Click);
+            button_updatedebt.Click += new EventHandler(button_updatedebt_Click);
+
+            button_savepayout.Click += new EventHandler(button_savepayout_Click);
+            button_saveincome.Click += new EventHandler(button_saveincome_Click);
         }
 
+        #region Main events
         private void tabPage1_SizeChanged(object sender, EventArgs e)
         {
             flowLayoutPanel1.Height = tabPage1.Height - 37;
         }
 
+        private void button_pre_Click(object sender, EventArgs e)
+        {
+            dateTimePicker_year.Value = new DateTime(dateTimePicker_year.Value.Year - 1, 1, 1);
+        }
+
+        private void button_next_Click(object sender, EventArgs e)
+        {
+            dateTimePicker_year.Value = new DateTime(dateTimePicker_year.Value.Year + 1, 1, 1);
+        }
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+            Reload();
+        }
+        #endregion
+
+        #region Generated events
         private void DGV_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.ColumnIndex == 0)
             {
                 DataGridView dgv = sender as DataGridView;
+
                 if (dgv.Rows[0].Cells[0].Value.ToString() == "+")
                 {
                     dgv.Rows[0].Cells[0].Value = "-";
@@ -1392,6 +1649,60 @@ namespace ThePool
                     GenerateGB(dgv.Rows[0].Cells[1].Value.ToString(), out gb);
                     flowLayoutPanel1.Controls.Add(gb);
                     flowLayoutPanel1.Controls.SetChildIndex(gb, flowLayoutPanel1.Controls.IndexOf(dgv) + 1);
+                    
+                    // load values
+                    DateTime Start = DateTime.Parse(dgv.Rows[0].Cells[1].Value.ToString());
+                    DateTime End = Start.AddMonths(1);
+                    int intervel;
+
+                    TabControl tb = gb.Controls[0] as TabControl;
+                    TabPage tpCash = tb.TabPages["tabPage_cash"];
+                    TabPage tpInvest = tb.TabPages["tabPage_invest"];
+                    TabPage tpDebt = tb.TabPages["tabPage_debt"];
+                    TabPage tpPayout = tb.TabPages["tabPage_payout"];
+                    TabPage tpIncome = tb.TabPages["tabPage_income"];
+
+                    ((NumericUpDown)tpCash.Controls["numericUpDown_cash"]).Value = decimal.Parse(dgv.Rows[0].Cells[3].Value.ToString());
+                    ((NumericUpDown)tpInvest.Controls["numericUpDown_invest"]).Value = decimal.Parse(dgv.Rows[0].Cells[4].Value.ToString());
+                    ((NumericUpDown)tpDebt.Controls["numericUpDown_debt"]).Value = decimal.Parse(dgv.Rows[0].Cells[9].Value.ToString());
+                    
+                    ListBox projList = tpInvest.Controls["listBox_invest"] as ListBox;
+                    DataGridView incomeDGV = tpIncome.Controls["datagridview_income"] as DataGridView;
+                    foreach (Project project in ar_Projects)
+                    {
+                        if (project.end < Start) continue;
+                        else projList.Items.Add(project.name);
+
+                        if (project.start < End)
+                        {
+                            if (project.end >= End)
+                            {
+                                switch (project.cycle)
+                                {
+                                    case Cycle.monthly: intervel = 1; break;
+                                    case Cycle.seasonly: intervel = 3; break;
+                                    case Cycle.halfyearly: intervel = 6; break;
+                                    case Cycle.yearly: intervel = 12; break;
+                                    default: intervel = 0; break;
+                                }
+                                if (((End.Year - project.start.Year) * 12 + End.Month - project.start.Month) % intervel == 0)
+                                {
+                                    incomeDGV.Rows.Add(project.start.Day,
+                                        (project.volume * (project.rate * intervel / 12f) * ((int)((End.Year - project.start.Year) * 12 + End.Month - project.start.Month) / intervel)),
+                                        "投资收益: \"" + project.name + "\"(总投资" + project.volume + "万)");
+                                    incomeDGV.Rows[incomeDGV.Rows.Count - 2].ReadOnly = true;
+                                }
+                            }
+                        }
+                    }
+                    ListBox debtList = tpDebt.Controls["listBox_debt"] as ListBox;
+                    foreach (Debt debt in ar_Debts)
+                    {
+                        if (debt.end < Start) continue;
+                        else debtList.Items.Add(debt.name);
+
+
+                    }                    
                 }
                 else
                 {
@@ -1401,15 +1712,15 @@ namespace ThePool
             }
         }
 
-        private void ToolStripMenuItem_delete_Click(object sender, EventArgs e)
+        private void DGV_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
         {
-            if (tempDGV.SelectedRows[0].IsNewRow) return;
-            if (tempDGV.SelectedRows[0].ReadOnly)
-            {
-                MessageBox.Show("投资或负债资金流不可直接删除！请编辑投资负债信息！", "删除失败", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                return;
-            }
-            tempDGV.Rows.Remove(tempDGV.SelectedRows[0]);
+            DataGridView dgv = sender as DataGridView;
+            // if comment contains new investment, then highlight the invest volume
+            if (dgv.Rows[e.RowIndex].Cells[8].Value.ToString().Contains("新投资"))
+                dgv.Rows[e.RowIndex].Cells[4].Style.BackColor = Color.Orange;
+            // warning for minus value of cash
+            if (dgv.Rows[e.RowIndex].Cells[3].Value.ToString().Contains("-"))
+                dgv.Rows[e.RowIndex].Cells[3].Style.BackColor = Color.Red;
         }
 
         private void dataGridView_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
@@ -1422,24 +1733,53 @@ namespace ThePool
             }
         }
 
-        private void listBox_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void ToolStripMenuItem_delete_Click(object sender, EventArgs e)
         {
-            
-        }
+            if (tempDGV.SelectedRows[0].IsNewRow) return;
+            if (tempDGV.SelectedRows[0].ReadOnly)
+            {
+                MessageBox.Show("投资或负债资金流不可直接删除！请编辑投资负债信息！", "删除失败", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+            tempDGV.Rows.Remove(tempDGV.SelectedRows[0]);
+        }        
 
-        private void button_pre_Click(object sender, EventArgs e)
-        {
-            dateTimePicker1.Value = new DateTime(dateTimePicker1.Value.Year - 1, 1, 1);
-        }
-
-        private void button_next_Click(object sender, EventArgs e)
-        {
-            dateTimePicker1.Value = new DateTime(dateTimePicker1.Value.Year + 1, 1, 1);
-        }
-
-        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        private void button_new_Click(object sender, EventArgs e)
         {
 
+            Button b = sender as Button;
+            (b.Parent.Controls["groupBox_cash"].Controls["textBox_name"] as TextBox).Text = "test";
         }
+
+        private void button_save_Click(object sender, EventArgs e)
+        { }
+
+        private void listBox_invent_MouseDoubleClick(object sender, MouseEventArgs e)
+        { }
+
+        private void button_stopinvest_Click(object sender, EventArgs e)
+        { }
+
+        private void button_updateinvest_Click(object sender, EventArgs e)
+        { }
+
+        private void listBox_debt_MouseDoubleClick(object sender, MouseEventArgs e)
+        { }
+
+        private void button_newdebt_Click(object sender, EventArgs e)
+        { }
+
+        private void button_stopdebt_Click(object sender, EventArgs e)
+        { }
+
+        private void button_updatedebt_Click(object sender, EventArgs e)
+        { }
+
+        private void button_savepayout_Click(object sender, EventArgs e)
+        { }
+
+        private void button_saveincome_Click(object sender, EventArgs e)
+        { }
+        #endregion
     }
 }

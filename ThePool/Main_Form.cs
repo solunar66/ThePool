@@ -69,6 +69,8 @@ namespace ThePool
             double adjustMoney = 0;
             string comment;
 
+            double monthIncome, monthPayout, monthAdjust, monthDebt;
+
             for (int i = 1; i <= 12; i++)
             {
                 DataGridView dgv;
@@ -84,6 +86,7 @@ namespace ThePool
                 start = new DateTime(dateTimePicker_year.Value.Year, i, 1);
                 end = start.AddDays(1 - start.Day).AddMonths(1).AddDays(-1);
 
+                //------------------ for total status----------------//
                 /* partners */
                 foreach (Partner partner in ar_Partners)
                 {
@@ -187,26 +190,101 @@ namespace ThePool
                     }
                 }
 
-                // sum all up
+                // sum up
                 List<string> data = new List<string>();
                 // date
-                data.Add(dateTimePicker_year.Value.Year.ToString() + "-" + (i + 1).ToString().PadLeft(2, '0'));
+                data.Add(dateTimePicker_year.Value.Year.ToString() + "-" + i.ToString().PadLeft(2, '0'));
                 // total
                 data.Add(baseMoney.ToString());
                 // cash
                 data.Add((baseMoney - baseInvest + projInterest - parInterest - debtMoney + adjustMoney).ToString("N2"));
                 // invest                
                 data.Add(baseInvest.ToString());
-                // payout
-                data.Add((parInterest + debtMoney).ToString());
+
+                //------------------ for current month status----------------//
+                monthIncome = 0;
+                monthPayout = 0;
+                monthAdjust = 0;
+                monthDebt   = 0;
+
+                foreach (Project project in ar_Projects)
+                {
+                    if (project.end < start) continue;
+
+                    if (project.start < end)
+                    {
+                        if (project.end >= end)
+                        {
+                            switch (project.cycle)
+                            {
+                                case Cycle.monthly: intervel = 1; break;
+                                case Cycle.seasonly: intervel = 3; break;
+                                case Cycle.halfyearly: intervel = 6; break;
+                                case Cycle.yearly: intervel = 12; break;
+                                default: intervel = 0; break;
+                            }
+                            if (((end.Year - project.start.Year) * 12 + end.Month - project.start.Month) % intervel == 0)
+                            {
+                                monthIncome += (project.volume * (project.rate * intervel / 12f) * intervel);
+                            }
+                        }
+                    }
+                }
+
+                foreach (Debt debt in ar_Debts)
+                {
+                    if (debt.end < start) continue;
+
+                    if (debt.start < end)
+                    {
+                        if (debt.end >= end)
+                        {
+                            switch (debt.cycle)
+                            {
+                                case Cycle.monthly: intervel = 1; break;
+                                case Cycle.seasonly: intervel = 3; break;
+                                case Cycle.halfyearly: intervel = 6; break;
+                                case Cycle.yearly: intervel = 12; break;
+                                default: intervel = 0; break;
+                            }
+                            if (((end.Year - debt.start.Year) * 12 + end.Month - debt.start.Month) % intervel == 0)
+                            {
+                                monthPayout += debt.volume;
+                                monthDebt += debt.volume;
+                            }
+                        }
+                    }
+                }
+
+                foreach (Calendar calendar in ar_Calendars)
+                {
+                    if (calendar.date >= start && calendar.date < end)
+                    {
+                        foreach (Flow flow in calendar.flows)
+                        {
+                            if (flow.type == FlowType.income)
+                            {
+                                monthAdjust += flow.volume;
+                            }
+                            else if (flow.type == FlowType.payout)
+                            {
+                                monthAdjust -= flow.volume;
+                            }
+                            else { }
+                        }
+                    }
+                }
+
                 // income
-                data.Add(projInterest.ToString());
+                data.Add(monthIncome.ToString());
+                // payout
+                data.Add(monthPayout.ToString());
                 // adjust
-                data.Add(adjustMoney.ToString());
+                data.Add(monthAdjust.ToString());
                 // comment
                 data.Add(comment);
                 // debt
-                data.Add(debtMoney.ToString());
+                data.Add(monthDebt.ToString());
 
                 GenerateDGV(data, out dgv);
                 flowLayoutPanel1.Controls.Add(dgv);
@@ -221,8 +299,8 @@ namespace ThePool
         /// 1: total volume
         /// 2: cash
         /// 3: invest
-        /// 4: payout
-        /// 5: income
+        /// 4: income
+        /// 5: payout
         /// 6: adjust
         /// 7: comment
         /// 8: debt
@@ -254,7 +332,7 @@ namespace ThePool
             DGV.AllowUserToResizeRows = false;
             DGV.ForeColor = Color.Black;
             DGV.BackgroundColor = Color.White;
-            DGV.DefaultCellStyle.SelectionBackColor = Color.White;
+            DGV.DefaultCellStyle.SelectionBackColor = Color.Transparent;
             DGV.DefaultCellStyle.SelectionForeColor = Color.Black;
             DGV.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             DGV.Columns.AddRange(new DataGridViewColumn[] {
@@ -1190,6 +1268,7 @@ namespace ThePool
             numericUpDown_debt.TextAlign = HorizontalAlignment.Center;
             numericUpDown_debt.InterceptArrowKeys = false;
             numericUpDown_debt.Maximum = 100000;
+            numericUpDown_debt.DecimalPlaces = 2;
             // 
             // groupBox_debt
             // 
@@ -1278,7 +1357,7 @@ namespace ThePool
             // 
             // numericUpDown_volumedebt
             // 
-            numericUpDown_volumedebt.DecimalPlaces = 1;
+            numericUpDown_volumedebt.DecimalPlaces = 2;
             numericUpDown_volumedebt.Increment = new decimal(new int[] {
             1,
             0,
@@ -1469,6 +1548,7 @@ namespace ThePool
             numericUpDown_payout.TextAlign = HorizontalAlignment.Center;
             numericUpDown_payout.InterceptArrowKeys = false;
             numericUpDown_payout.Maximum = 100000;
+            numericUpDown_payout.DecimalPlaces = 2;
             // 
             // tabPage_income
             // 
@@ -1546,6 +1626,7 @@ namespace ThePool
             numericUpDown_income.TextAlign = HorizontalAlignment.Center;
             numericUpDown_income.InterceptArrowKeys = false;
             numericUpDown_income.Maximum = 100000;
+            numericUpDown_income.DecimalPlaces = 2;
             // 
             // contextMenuStrip1
             // 
@@ -1668,6 +1749,7 @@ namespace ThePool
                     
                     ListBox projList = tpInvest.Controls["listBox_invest"] as ListBox;
                     DataGridView incomeDGV = tpIncome.Controls["datagridview_income"] as DataGridView;
+                    DataGridView payoutDGV = tpPayout.Controls["datagridview_payout"] as DataGridView;
                     foreach (Project project in ar_Projects)
                     {
                         if (project.end < Start) continue;
@@ -1688,7 +1770,7 @@ namespace ThePool
                                 if (((End.Year - project.start.Year) * 12 + End.Month - project.start.Month) % intervel == 0)
                                 {
                                     incomeDGV.Rows.Add(project.start.Day,
-                                        (project.volume * (project.rate * intervel / 12f) * ((int)((End.Year - project.start.Year) * 12 + End.Month - project.start.Month) / intervel)),
+                                        (project.volume * (project.rate * intervel / 12f) * intervel),
                                         "投资收益: \"" + project.name + "\"(总投资" + project.volume + "万)");
                                     incomeDGV.Rows[incomeDGV.Rows.Count - 2].ReadOnly = true;
                                 }
@@ -1701,8 +1783,58 @@ namespace ThePool
                         if (debt.end < Start) continue;
                         else debtList.Items.Add(debt.name);
 
+                        if (debt.start < End)
+                        {
+                            if (debt.end >= End)
+                            {
+                                switch (debt.cycle)
+                                {
+                                    case Cycle.monthly: intervel = 1; break;
+                                    case Cycle.seasonly: intervel = 3; break;
+                                    case Cycle.halfyearly: intervel = 6; break;
+                                    case Cycle.yearly: intervel = 12; break;
+                                    default: intervel = 0; break;
+                                }
+                                if (((End.Year - debt.start.Year) * 12 + End.Month - debt.start.Month) % intervel == 0)
+                                {
+                                    payoutDGV.Rows.Add(debt.start.Day,
+                                        debt.volume,
+                                        "负债支出: \"" + debt.name + "\"");
+                                    payoutDGV.Rows[payoutDGV.Rows.Count - 2].ReadOnly = true;
+                                }
+                            }
+                        }
+                    }
 
-                    }                    
+                    foreach (Calendar calendar in ar_Calendars)
+                    {
+                        if (calendar.date >= Start && calendar.date < End)
+                        {
+                            foreach (Flow flow in calendar.flows)
+                            {
+                                if (flow.type == FlowType.income)
+                                {
+                                    incomeDGV.Rows.Add(calendar.date.Day, flow.volume, "调整收入: \"" + flow.comment + "\"");
+                                }
+                                else if (flow.type == FlowType.payout)
+                                {
+                                    payoutDGV.Rows.Add(calendar.date.Day, flow.volume, "调整支出: \"" + flow.comment + "\"");
+                                }
+                                else { }
+                            }
+                        }
+                    }
+
+                    foreach (DataGridViewRow row in incomeDGV.Rows)
+                    {
+                        if(!row.IsNewRow)
+                            (tpIncome.Controls["numericUpDown_income"] as NumericUpDown).Value += decimal.Parse(row.Cells[1].Value.ToString());
+                    }
+                    foreach (DataGridViewRow row in payoutDGV.Rows)
+                    {
+                        if (!row.IsNewRow)
+                            (tpPayout.Controls["numericUpDown_payout"] as NumericUpDown).Value += decimal.Parse(row.Cells[1].Value.ToString());
+                    }
                 }
                 else
                 {

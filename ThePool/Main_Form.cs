@@ -1771,7 +1771,7 @@ namespace ThePool
                                 {
                                     incomeDGV.Rows.Add(project.start.Day,
                                         (project.volume * (project.rate * intervel / 12f) * intervel),
-                                        "投资收益: \"" + project.name + "\"(总投资" + project.volume + "万)");
+                                        "投资 收益: \"" + project.name + "\"(总投资" + project.volume + "万)");
                                     incomeDGV.Rows[incomeDGV.Rows.Count - 2].ReadOnly = true;
                                 }
                             }
@@ -1799,7 +1799,7 @@ namespace ThePool
                                 {
                                     payoutDGV.Rows.Add(debt.start.Day,
                                         debt.volume,
-                                        "负债支出: \"" + debt.name + "\"");
+                                        "负债 支出: \"" + debt.name + "\"");
                                     payoutDGV.Rows[payoutDGV.Rows.Count - 2].ReadOnly = true;
                                 }
                             }
@@ -1814,11 +1814,11 @@ namespace ThePool
                             {
                                 if (flow.type == FlowType.income)
                                 {
-                                    incomeDGV.Rows.Add(calendar.date.Day, flow.volume, "调整收入: \"" + flow.comment + "\"");
+                                    incomeDGV.Rows.Add(calendar.date.Day, flow.volume, "调整 收入: \"" + flow.comment + "\"");
                                 }
                                 else if (flow.type == FlowType.payout)
                                 {
-                                    payoutDGV.Rows.Add(calendar.date.Day, flow.volume, "调整支出: \"" + flow.comment + "\"");
+                                    payoutDGV.Rows.Add(calendar.date.Day, flow.volume, "调整 支出: \"" + flow.comment + "\"");
                                 }
                                 else { }
                             }
@@ -1896,7 +1896,9 @@ namespace ThePool
         { }
 
         private void listBox_debt_MouseDoubleClick(object sender, MouseEventArgs e)
-        { }
+        {
+
+        }
 
         private void button_newdebt_Click(object sender, EventArgs e)
         { }

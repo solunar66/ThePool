@@ -28,15 +28,6 @@ namespace ThePool
         private void Main_Form_Load(object sender, EventArgs e)
         {
             Reload();
-
-            //for (int i = 0; i < 12; i++)
-            //{
-            //    DataGridView dgv;
-            //    GenerateDGV("dgv" + i.ToString(), out dgv);
-            //    dgv.Rows[0].Cells[1].Value = "2013-" + (i + 1).ToString();
-            //    dgv.Rows[0].Cells[4].ToolTipText = "本月新投资A";
-            //    flowLayoutPanel1.Controls.Add(dgv);
-            //}
         }
 
         private void Reload()
@@ -1450,7 +1441,7 @@ namespace ThePool
             button_updatedebt.Name = "button_updatedebt";
             button_updatedebt.Size = new System.Drawing.Size(91, 25);
             button_updatedebt.TabIndex = 18;
-            button_updatedebt.Text = "更新负债";
+            button_updatedebt.Text = "保存修改";
             button_updatedebt.UseVisualStyleBackColor = true;
             // 
             // button_newdebt
@@ -1753,7 +1744,7 @@ namespace ThePool
                     foreach (Project project in ar_Projects)
                     {
                         if (project.end < Start) continue;
-                        else projList.Items.Add(project.name);
+                        else if (project.start <= End) projList.Items.Add(project.name);
 
                         if (project.start < End)
                         {
@@ -1781,7 +1772,7 @@ namespace ThePool
                     foreach (Debt debt in ar_Debts)
                     {
                         if (debt.end < Start) continue;
-                        else debtList.Items.Add(debt.name);
+                        else if (debt.start <= End) debtList.Items.Add(debt.name);
 
                         if (debt.start < End)
                         {
@@ -1884,33 +1875,316 @@ namespace ThePool
         }
 
         private void button_save_Click(object sender, EventArgs e)
-        { }
+        {
+            GroupBox gb = ((sender as Button).Parent as TabPage).Controls["groupBox_cash"] as GroupBox;
+            string name = (gb.Controls["textBox_name"] as TextBox).Text;
+            double volume = (double)(gb.Controls["numericUpDown_volume"] as NumericUpDown).Value;
+            double rate = (double)(gb.Controls["numericUpDown_rate"] as NumericUpDown).Value;
+            int cycle = (gb.Controls["comboBox_cycle"] as ComboBox).SelectedIndex;
+            int day = (gb.Controls["comboBox_day"] as ComboBox).SelectedIndex;
+
+            if (name == "" || volume == 0 || rate == 0 || cycle == -1 || day == -1)
+            {
+                MessageBox.Show("请输入完整项目信息!", "新建项目", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            foreach (Project p in ar_Projects)
+            {
+                if (p.name == name)
+                {
+                    MessageBox.Show("已存在同名项目！请重新输入项目名称！", "新建项目失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+
+            Project project = new Project();
+            project.name = name;
+            project.contact = (gb.Controls["textBox_contact"] as TextBox).Text;
+            project.telephone = (gb.Controls["textBox_phone"] as TextBox).Text;
+            project.comment = (gb.Controls["textBox_comment"] as TextBox).Text;
+            project.volume = volume;
+            project.rate = rate;
+            project.cycle = (Cycle)Enum.ToObject(typeof(Cycle), byte.Parse(cycle.ToString()));
+            
+            DateTime curMonth = DateTime.Parse(((((sender as Button).Parent as TabPage).Parent as TabControl).Parent as GroupBox).Text);
+            project.start = new DateTime(curMonth.Year, curMonth.Month, day + 1);
+            project.end = new DateTime(2100, 1, 1);
+
+            if (DialogResult.Yes == MessageBox.Show("请确认添加项目: \"" + project.name + "\"", "新建项目", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
+            {
+                ar_Projects.Add(project);
+                try
+                {
+                    Xml.UpdateProject(file_Projects, ar_Projects);
+                    MessageBox.Show("项目信息添加成功!", "新建项目", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Reload();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("项目信息添加失败!\n\n(" + ex.Message + ")", "新建项目", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
 
         private void listBox_invent_MouseDoubleClick(object sender, MouseEventArgs e)
-        { }
+        {
+            ListBox list = sender as ListBox;
+
+            foreach (Project project in ar_Projects)
+            {
+                if (project.name == list.SelectedItem.ToString())
+                {
+                    GroupBox gb = (list.Parent as TabPage).Controls["groupBox_invest"] as GroupBox;
+                    (gb.Controls["textBox_nameinvest"] as TextBox).Text = project.name;
+                    (gb.Controls["textBox_contactinvest"] as TextBox).Text = project.contact;
+                    (gb.Controls["textBox_telephoneinvest"] as TextBox).Text = project.telephone;
+                    (gb.Controls["numericUpDown_volumeinvest"] as NumericUpDown).Value = (decimal)project.volume;
+                    (gb.Controls["numericUpDown_rateinvest"] as NumericUpDown).Value = (decimal)project.rate;
+                    (gb.Controls["comboBox_cycleinvest"] as ComboBox).SelectedIndex = (int)project.cycle;
+                    (gb.Controls["comboBox_dayinvest"] as ComboBox).SelectedIndex = project.start.Day - 1;
+                    (gb.Controls["textBox_commentinvest"] as TextBox).Text = project.comment;
+                    break;
+                }
+            }
+        }
 
         private void button_stopinvest_Click(object sender, EventArgs e)
-        { }
+        {
+            GroupBox gb = (sender as Button).Parent as GroupBox;
+
+            if((gb.Controls["textBox_nameinvest"] as TextBox).Text == "") return;
+
+            foreach (Project project in ar_Projects)
+            {
+                if (project.name == (gb.Controls["textBox_nameinvest"] as TextBox).Text)
+                {
+                    if (DialogResult.Yes == MessageBox.Show("确认终止投资项目\"" + project.name + "\"?", "终止项目", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
+                    {
+                        ar_Projects.Remove(project);
+                        DateTime curMonth = DateTime.Parse((gb.Parent.Parent.Parent as GroupBox).Text);
+                        Project proj = project;
+                        proj.end = new DateTime(curMonth.Year, curMonth.Month, project.start.Day);
+                        ar_Projects.Add(proj);
+                        try
+                        {
+                            Xml.UpdateProject(file_Projects, ar_Projects);
+                            MessageBox.Show("项目终止成功!", "终止项目", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            Reload();
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("项目终止失败!\n\n(" + ex.Message + ")", "终止项目", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    return;
+                }
+            }
+            MessageBox.Show("未找到投资项\"" + (gb.Controls["textBox_nameinvest"] as TextBox).Text + "\"!请从左侧列表中选取!", "停止项目", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
 
         private void button_updateinvest_Click(object sender, EventArgs e)
-        { }
+        {
+            GroupBox gb = (sender as Button).Parent as GroupBox;
+            string name = (gb.Controls["textBox_nameinvest"] as TextBox).Text;
+            double volume = (double)(gb.Controls["numericUpDown_volumeinvest"] as NumericUpDown).Value;
+            double rate = (double)(gb.Controls["numericUpDown_rateinvest"] as NumericUpDown).Value;
+            int cycle = (gb.Controls["comboBox_cycleinvest"] as ComboBox).SelectedIndex;
+            int day = (gb.Controls["comboBox_dayinvest"] as ComboBox).SelectedIndex;
+
+            if (name == "" || volume == 0 || rate == 0 || cycle == -1 || day == -1)
+            {
+                MessageBox.Show("请输入完整项目信息!", "更新项目", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            foreach (Project p in ar_Projects)
+            {
+                if (p.name == name)
+                {         
+                    if (DialogResult.Yes == MessageBox.Show("请确认更新项目: \"" + p.name + "\"\n\n注：更新的项目信息会影响此前的资金量计算，请谨慎操作\n\n建议: 若调整投资额、收益率、付息周期、付息日，请中止当前项目并新建项目", "更新项目", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
+                    {
+                        Project project = new Project();
+                        project.name = name;
+                        project.contact = (gb.Controls["textBox_contactinvest"] as TextBox).Text;
+                        project.telephone = (gb.Controls["textBox_telephoneinvest"] as TextBox).Text;
+                        project.comment = (gb.Controls["textBox_commentinvest"] as TextBox).Text;
+                        project.volume = volume;
+                        project.rate = rate;
+                        project.cycle = (Cycle)Enum.ToObject(typeof(Cycle), byte.Parse(cycle.ToString()));
+                        project.start = new DateTime(p.start.Year, p.start.Month, day + 1); ;
+                        project.end = p.end;
+
+                        ar_Projects.Remove(p);
+                        ar_Projects.Add(project);
+
+                        try
+                        {
+                            Xml.UpdateProject(file_Projects, ar_Projects);
+                            MessageBox.Show("项目信息更新成功!", "更新项目", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            Reload();
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("项目信息更新失败!\n\n(" + ex.Message + ")", "更新项目", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    return;
+                }
+            }
+
+            MessageBox.Show("未找到项目\"" + name + "\"!", "更新项目", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
 
         private void listBox_debt_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            ListBox list = sender as ListBox;
 
+            foreach (Debt debt in ar_Debts)
+            {
+                if (debt.name == list.SelectedItem.ToString())
+                {
+                    GroupBox gb = (list.Parent as TabPage).Controls["groupBox_debt"] as GroupBox;
+                    (gb.Controls["textBox_namedebt"] as TextBox).Text = debt.name;
+                    (gb.Controls["numericUpDown_volumedebt"] as NumericUpDown).Value = (decimal)debt.volume;
+                    (gb.Controls["comboBox_cycledebt"] as ComboBox).SelectedIndex = (int)(debt.cycle);
+                    (gb.Controls["comboBox_daydebt"] as ComboBox).SelectedIndex = debt.start.Day - 1;
+                    (gb.Controls["textBox_commentdebt"] as TextBox).Text = debt.comment;
+                    break;
+                }
+            }
         }
 
         private void button_newdebt_Click(object sender, EventArgs e)
-        { }
+        {
+            GroupBox gb = (sender as Button).Parent.Controls["groupBox_debt"] as GroupBox;
+
+            (gb.Controls["textBox_namedebt"] as TextBox).Text = "";
+            (gb.Controls["numericUpDown_volumedebt"] as NumericUpDown).Value = 0;
+            (gb.Controls["comboBox_cycledebt"] as ComboBox).SelectedIndex = 1;
+            (gb.Controls["comboBox_daydebt"] as ComboBox).SelectedIndex = 0;
+            (gb.Controls["textBox_commentdebt"] as TextBox).Text = "";
+        }
 
         private void button_stopdebt_Click(object sender, EventArgs e)
-        { }
+        {
+            GroupBox gb = (sender as Button).Parent.Controls["groupBox_debt"] as GroupBox;
+
+            if ((gb.Controls["textBox_namedebt"] as TextBox).Text == "") return;
+
+            foreach (Debt debt in ar_Debts)
+            {
+                if (debt.name == (gb.Controls["textBox_namedebt"] as TextBox).Text)
+                {
+                    if (DialogResult.Yes == MessageBox.Show("确认终止负债\"" + debt.name + "\"?", "终止负债", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
+                    {
+                        ar_Debts.Remove(debt);
+                        DateTime curMonth = DateTime.Parse((gb.Parent.Parent.Parent as GroupBox).Text);
+                        Debt d = debt;
+                        d.end = new DateTime(curMonth.Year, curMonth.Month, debt.start.Day);
+                        ar_Debts.Add(d);
+                        try
+                        {
+                            Xml.UpdateDebt(file_Debts, ar_Debts);
+                            MessageBox.Show("负债终止成功!", "终止负债", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            Reload();
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("负债终止失败!\n\n(" + ex.Message + ")", "终止负债", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    return;
+                }
+            }
+            MessageBox.Show("未找到负债\"" + (gb.Controls["textBox_namedebt"] as TextBox).Text + "\"!请从左侧列表中选取!", "停止项目", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
 
         private void button_updatedebt_Click(object sender, EventArgs e)
-        { }
+        {
+            GroupBox gb = (sender as Button).Parent.Controls["groupBox_debt"] as GroupBox;
+
+            string name = (gb.Controls["textBox_namedebt"] as TextBox).Text;
+            double volume = (double)(gb.Controls["numericUpDown_volumedebt"] as NumericUpDown).Value;
+            int cycle = (gb.Controls["comboBox_cycledebt"] as ComboBox).SelectedIndex;
+            int day = (gb.Controls["comboBox_daydebt"] as ComboBox).SelectedIndex;
+            string comment = (gb.Controls["textBox_commentdebt"] as TextBox).Text;
+
+            if (name == "" || volume <= 0 || cycle == -1 || day == -1)
+            {
+                MessageBox.Show("请输入完整负债信息!", "更新负债", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (cycle == 0)
+            {
+                MessageBox.Show("负债周期不可为\"不定期\"!", "更新负债", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            foreach (Debt d in ar_Debts)
+            {
+                if (d.name == name)
+                {
+                    if (DialogResult.Yes == MessageBox.Show("请确认更新负债: \"" + d.name + "\"\n\n注：更新的负债信息会影响此前的资金量计算，请谨慎操作\n\n建议: 若调整负债金额、周期、生效日，请中止当前负债并新建负债", "更新负债", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
+                    {
+                        Debt debt = new Debt();
+                        debt.name = name;
+                        debt.volume = volume;
+                        debt.cycle = (Cycle)Enum.ToObject(typeof(Cycle), byte.Parse(cycle.ToString()));
+                        debt.start = new DateTime(d.start.Year, d.start.Month, day + 1);
+                        debt.end = d.end;
+                        debt.comment = comment;
+
+                        ar_Debts.Remove(d);
+                        ar_Debts.Add(debt);
+
+                        try
+                        {
+                            Xml.UpdateDebt(file_Debts, ar_Debts);
+                            MessageBox.Show("负债信息更新成功!", "更新负债", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            Reload();
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("负债信息更新失败!\n\n(" + ex.Message + ")", "更新负债", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    return;
+                }
+            }
+
+            if (DialogResult.Yes == MessageBox.Show("请确认保存新负债: \"" + name + "\"", "新建负债", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
+            {
+                DateTime curMonth = DateTime.Parse((gb.Parent.Parent.Parent as GroupBox).Text);
+
+                Debt debt = new Debt();
+                debt.name = name;
+                debt.volume = volume;
+                debt.cycle = (Cycle)Enum.ToObject(typeof(Cycle), byte.Parse(cycle.ToString()));
+                debt.start = new DateTime(curMonth.Year,curMonth.Month, day + 1);
+                debt.end = new DateTime(2100, 1, 1);
+                debt.comment = comment;
+
+                ar_Debts.Add(debt);
+
+                try
+                {
+                    Xml.UpdateDebt(file_Debts, ar_Debts);
+                    MessageBox.Show("负债信息保存成功!", "新建负债", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Reload();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("负债信息保存失败!\n\n(" + ex.Message + ")", "新建负债", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
 
         private void button_savepayout_Click(object sender, EventArgs e)
-        { }
+        {
+
+        }
 
         private void button_saveincome_Click(object sender, EventArgs e)
         { }

@@ -2183,11 +2183,119 @@ namespace ThePool
 
         private void button_savepayout_Click(object sender, EventArgs e)
         {
+            if (DialogResult.Yes == MessageBox.Show("确认修改本月支出信息?", "确认修改", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
+            {
+                DataGridView dgv = (sender as Button).Parent.Controls["dataGridView_payout"] as DataGridView;
 
+                DateTime curMonth = DateTime.Parse((dgv.Parent.Parent.Parent as GroupBox).Text);
+                foreach (Calendar c in ar_Calendars)
+                {
+                    if (c.date.Year == curMonth.Year && c.date.Month == curMonth.Month)
+                    {
+                        foreach(Flow f in c.flows)
+                        {
+                            if (f.type == FlowType.payout)
+                                c.flows.Remove(f);
+                        }
+                    }
+                }
+                try
+                {
+                    foreach (DataGridViewRow row in dgv.Rows)
+                    {
+                        if (!row.ReadOnly && !row.IsNewRow)
+                        {
+                            Calendar calendar = new Calendar();
+                            calendar.date = new DateTime(curMonth.Year, curMonth.Month, int.Parse(row.Cells[0].Value.ToString()));
+                            Flow flow = new Flow();
+                            flow.type = FlowType.payout;
+                            flow.volume = double.Parse(row.Cells[1].Value.ToString());
+                            flow.comment = row.Cells[2].Value.ToString();
+                            foreach (Calendar existC in ar_Calendars)
+                            {
+                                if (existC.date == calendar.date)
+                                {
+                                    existC.flows.Add(flow);
+                                    calendar.date = new DateTime(1000, 1, 1);
+                                    break;
+                                }
+                            }
+                            if (calendar.date.Year != 1000)
+                            {
+                                calendar.flows = new ArrayList();
+                                calendar.flows.Add(flow);
+                                ar_Calendars.Add(calendar);
+                            }
+                        }
+                    }
+                    Xml.UpdateCalendar(file_Calendars, ar_Calendars);
+                    MessageBox.Show("支出信息保存成功!", "保存成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Reload();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("支出信息保存失败!\n\n" + ex.Message, "保存失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
 
         private void button_saveincome_Click(object sender, EventArgs e)
-        { }
+        {
+            if (DialogResult.Yes == MessageBox.Show("确认修改本月收入信息?", "确认修改", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
+            {
+                DataGridView dgv = (sender as Button).Parent.Controls["dataGridView_income"] as DataGridView;
+
+                DateTime curMonth = DateTime.Parse((dgv.Parent.Parent.Parent as GroupBox).Text);
+                foreach (Calendar c in ar_Calendars)
+                {
+                    if (c.date.Year == curMonth.Year && c.date.Month == curMonth.Month)
+                    {
+                        foreach (Flow f in c.flows)
+                        {
+                            if (f.type == FlowType.income)
+                                c.flows.Remove(f);
+                        }
+                    }
+                }
+                try
+                {
+                    foreach (DataGridViewRow row in dgv.Rows)
+                    {
+                        if (!row.ReadOnly && !row.IsNewRow)
+                        {
+                            Calendar calendar = new Calendar();
+                            calendar.date = new DateTime(curMonth.Year, curMonth.Month, int.Parse(row.Cells[0].Value.ToString()));
+                            Flow flow = new Flow();
+                            flow.type = FlowType.payout;
+                            flow.volume = double.Parse(row.Cells[1].Value.ToString());
+                            flow.comment = row.Cells[2].Value.ToString();
+                            foreach (Calendar existC in ar_Calendars)
+                            {
+                                if (existC.date == calendar.date)
+                                {
+                                    existC.flows.Add(flow);
+                                    calendar.date = new DateTime(1000, 1, 1);
+                                    break;
+                                }
+                            }
+                            if (calendar.date.Year != 1000)
+                            {
+                                calendar.flows = new ArrayList();
+                                calendar.flows.Add(flow);
+                                ar_Calendars.Add(calendar);
+                            }
+                        }
+                    }
+                    Xml.UpdateCalendar(file_Calendars, ar_Calendars);
+                    MessageBox.Show("收入信息保存成功!", "保存成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Reload();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("收入信息保存失败!\n\n" + ex.Message, "保存失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
         #endregion
     }
 }

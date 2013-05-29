@@ -115,9 +115,11 @@ namespace ThePool
                     if (project.start < end)
                     {
                         if (project.start >= start)
-                        { comment += "新投资\"" + project.name + "\":" + project.volume.ToString() + "万; "; }
+                        { comment += "★新投资:\"" + project.name + "\"(" + project.volume.ToString() + "万); "; }
                         if (project.end < end)
                         {
+                            if (project.end >= start)
+                            { comment += "☆投资终止:\"" + project.name + "\"(" + project.volume.ToString() + "万)结息日:" + project.end.Day + "日; "; }
                             projInterest += project.volume * (project.rate / 12) * ((project.end.Year - project.start.Year) * 12 + project.end.Month - project.start.Month);
                         }
                         else
@@ -170,12 +172,14 @@ namespace ThePool
                             if (flow.type == FlowType.income)
                             {
                                 adjustMoney += flow.volume;
-                                comment += "调整收入\"" + flow.comment + "\":" + flow.volume.ToString() + "万; ";
+                                if (calendar.date >= start)
+                                { comment += "△调整收入\"" + flow.comment + "\"(" + flow.volume.ToString() + "万); "; }
                             }
                             else if (flow.type == FlowType.payout)
                             {
                                 adjustMoney -= flow.volume;
-                                comment += "调整支出\"" + flow.comment + "\":" + flow.volume.ToString() + "万; ";
+                                if (calendar.date >= start)
+                                { comment += "▽调整支出\"" + flow.comment + "\"(" + flow.volume.ToString() + "万); "; }
                             }
                         }
                     }
@@ -896,7 +900,6 @@ namespace ThePool
             // textBox_comment
             // 
             textBox_comment.Location = new System.Drawing.Point(6, 133);
-            textBox_comment.MaxLength = 8;
             textBox_comment.Name = "textBox_comment";
             textBox_comment.Size = new System.Drawing.Size(444, 21);
             textBox_comment.TabIndex = 2;
@@ -1191,7 +1194,6 @@ namespace ThePool
             // textBox_commentinvest
             // 
             textBox_commentinvest.Location = new System.Drawing.Point(6, 133);
-            textBox_commentinvest.MaxLength = 8;
             textBox_commentinvest.Name = "textBox_commentinvest";
             textBox_commentinvest.Size = new System.Drawing.Size(444, 21);
             textBox_commentinvest.TabIndex = 2;
@@ -1413,7 +1415,6 @@ namespace ThePool
             // textBox_commentdebt
             // 
             textBox_commentdebt.Location = new System.Drawing.Point(27, 147);
-            textBox_commentdebt.MaxLength = 8;
             textBox_commentdebt.Name = "textBox_commentdebt";
             textBox_commentdebt.Size = new System.Drawing.Size(272, 21);
             textBox_commentdebt.TabIndex = 2;
@@ -1805,11 +1806,11 @@ namespace ThePool
                             {
                                 if (flow.type == FlowType.income)
                                 {
-                                    incomeDGV.Rows.Add(calendar.date.Day, flow.volume, "调整 收入: \"" + flow.comment + "\"");
+                                    incomeDGV.Rows.Add(calendar.date.Day, flow.volume, flow.comment);
                                 }
                                 else if (flow.type == FlowType.payout)
                                 {
-                                    payoutDGV.Rows.Add(calendar.date.Day, flow.volume, "调整 支出: \"" + flow.comment + "\"");
+                                    payoutDGV.Rows.Add(calendar.date.Day, flow.volume, flow.comment);
                                 }
                                 else { }
                             }
@@ -1869,9 +1870,8 @@ namespace ThePool
 
         private void button_new_Click(object sender, EventArgs e)
         {
-
             Button b = sender as Button;
-            (b.Parent.Controls["groupBox_cash"].Controls["textBox_name"] as TextBox).Text = "test";
+            (b.Parent.Controls["groupBox_cash"].Controls["textBox_name"] as TextBox).Text = "";
         }
 
         private void button_save_Click(object sender, EventArgs e)
@@ -2188,14 +2188,20 @@ namespace ThePool
                 DataGridView dgv = (sender as Button).Parent.Controls["dataGridView_payout"] as DataGridView;
 
                 DateTime curMonth = DateTime.Parse((dgv.Parent.Parent.Parent as GroupBox).Text);
-                foreach (Calendar c in ar_Calendars)
+                for (int i = 0; i < ar_Calendars.Count; i++)
                 {
+                    Calendar c = (Calendar)ar_Calendars[i];
                     if (c.date.Year == curMonth.Year && c.date.Month == curMonth.Month)
                     {
-                        foreach(Flow f in c.flows)
+                        ArrayList newflows = new ArrayList();
+                        for (int j = 0; j < c.flows.Count; j++)
                         {
+                            Flow f = (Flow)c.flows[j];
                             if (f.type == FlowType.payout)
+                            {
                                 c.flows.Remove(f);
+                                j--;
+                            }
                         }
                     }
                 }
@@ -2246,14 +2252,20 @@ namespace ThePool
                 DataGridView dgv = (sender as Button).Parent.Controls["dataGridView_income"] as DataGridView;
 
                 DateTime curMonth = DateTime.Parse((dgv.Parent.Parent.Parent as GroupBox).Text);
-                foreach (Calendar c in ar_Calendars)
+                for (int i = 0; i < ar_Calendars.Count; i++)
                 {
+                    Calendar c = (Calendar)ar_Calendars[i];
                     if (c.date.Year == curMonth.Year && c.date.Month == curMonth.Month)
                     {
-                        foreach (Flow f in c.flows)
+                        ArrayList newflows = new ArrayList();
+                        for (int j = 0; j < c.flows.Count; j++)
                         {
+                            Flow f = (Flow)c.flows[j];
                             if (f.type == FlowType.income)
+                            {
                                 c.flows.Remove(f);
+                                j--;
+                            }
                         }
                     }
                 }
@@ -2266,7 +2278,7 @@ namespace ThePool
                             Calendar calendar = new Calendar();
                             calendar.date = new DateTime(curMonth.Year, curMonth.Month, int.Parse(row.Cells[0].Value.ToString()));
                             Flow flow = new Flow();
-                            flow.type = FlowType.payout;
+                            flow.type = FlowType.income;
                             flow.volume = double.Parse(row.Cells[1].Value.ToString());
                             flow.comment = row.Cells[2].Value.ToString();
                             foreach (Calendar existC in ar_Calendars)

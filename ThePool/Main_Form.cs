@@ -190,7 +190,7 @@ namespace ThePool
                 // date
                 data.Add(dateTimePicker_year.Value.Year.ToString() + "-" + i.ToString().PadLeft(2, '0'));
                 // total
-                data.Add(baseMoney.ToString());
+                data.Add((baseMoney + projInterest - parInterest - debtMoney + adjustMoney).ToString("N2"));
                 // cash
                 data.Add((baseMoney - baseInvest + projInterest - parInterest - debtMoney + adjustMoney).ToString("N2"));
                 // invest                

@@ -46,6 +46,7 @@ namespace ThePool
             DateTime start, end;
             // for interest payment calculation
             int intervel;
+            string intervelStr;
             // base:    partners' money
             // invest:  projects' money
             double baseMoney = 0;
@@ -145,14 +146,18 @@ namespace ThePool
                     {
                         switch (debt.cycle)
                         {
-                            case Cycle.monthly: intervel = 1; break;
-                            case Cycle.seasonly: intervel = 3; break;
-                            case Cycle.halfyearly: intervel = 6; break;
-                            case Cycle.yearly: intervel = 12; break;
-                            default: intervel = 0; break;
+                            case Cycle.monthly: intervel = 1; intervelStr = "每月"; break;
+                            case Cycle.seasonly: intervel = 3; intervelStr = "每季度"; break;
+                            case Cycle.halfyearly: intervel = 6; intervelStr = "每半年"; break;
+                            case Cycle.yearly: intervel = 12; intervelStr = "每年"; break;
+                            default: intervel = 0; intervelStr = ""; break;
                         }
+                        if (debt.start >= start)
+                        { comment += "╋新负债:\"" + debt.name + "\"(" + intervelStr + debt.volume.ToString() + "万); "; }
                         if (debt.end < end)
                         {
+                            if (debt.end >= start)
+                            { comment += "╬负债终止:\"" + debt.name + "\"(" + intervelStr + debt.volume.ToString() + "万); "; }
                             debtMoney += debt.volume * ((debt.end.Year - debt.start.Year) * 12 + debt.end.Month - debt.start.Month) / intervel;
                         }
                         else
@@ -218,7 +223,8 @@ namespace ThePool
                                 case Cycle.yearly: intervel = 12; break;
                                 default: intervel = 0; break;
                             }
-                            if (((end.Year - project.start.Year) * 12 + end.Month - project.start.Month) % intervel == 0)
+                            if (((end.Year - project.start.Year) * 12 + end.Month - project.start.Month) != 0
+                                && ((end.Year - project.start.Year) * 12 + end.Month - project.start.Month) % intervel == 0)
                             {
                                 monthIncome += (project.volume * (project.rate * intervel / 12f) * intervel);
                             }
@@ -2216,7 +2222,7 @@ namespace ThePool
                             Flow flow = new Flow();
                             flow.type = FlowType.payout;
                             flow.volume = double.Parse(row.Cells[1].Value.ToString());
-                            flow.comment = row.Cells[2].Value.ToString();
+                            flow.comment = row.Cells[2].Value == null ? "" : row.Cells[2].Value.ToString();
                             foreach (Calendar existC in ar_Calendars)
                             {
                                 if (existC.date == calendar.date)
@@ -2280,7 +2286,7 @@ namespace ThePool
                             Flow flow = new Flow();
                             flow.type = FlowType.income;
                             flow.volume = double.Parse(row.Cells[1].Value.ToString());
-                            flow.comment = row.Cells[2].Value.ToString();
+                            flow.comment = row.Cells[2].Value == null ? "" : row.Cells[2].Value.ToString();
                             foreach (Calendar existC in ar_Calendars)
                             {
                                 if (existC.date == calendar.date)

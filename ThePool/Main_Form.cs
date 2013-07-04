@@ -153,11 +153,11 @@ namespace ThePool
                             default: intervel = 0; intervelStr = ""; break;
                         }
                         if (debt.start >= start)
-                        { comment += "╋新负债:\"" + debt.name + "\"(" + intervelStr + debt.volume.ToString() + "万); "; }
+                        { comment += "╋新生活支出:\"" + debt.name + "\"(" + intervelStr + debt.volume.ToString() + "万); "; }
                         if (debt.end < end)
                         {
                             if (debt.end >= start)
-                            { comment += "╬负债终止:\"" + debt.name + "\"(" + intervelStr + debt.volume.ToString() + "万); "; }
+                            { comment += "╬生活支出终止:\"" + debt.name + "\"(" + intervelStr + debt.volume.ToString() + "万); "; }
                             debtMoney += debt.volume * ((debt.end.Year - debt.start.Year) * 12 + debt.end.Month - debt.start.Month) / intervel;
                         }
                         else
@@ -1244,7 +1244,7 @@ namespace ThePool
             tabPage_debt.Padding = new Padding(3);
             tabPage_debt.Size = new System.Drawing.Size(721, 207);
             tabPage_debt.TabIndex = 4;
-            tabPage_debt.Text = "负债";
+            tabPage_debt.Text = "生活支出";
             tabPage_debt.UseVisualStyleBackColor = true;
             // 
             // label23
@@ -1255,7 +1255,7 @@ namespace ThePool
             label23.Name = "label23";
             label23.Size = new System.Drawing.Size(84, 12);
             label23.TabIndex = 25;
-            label23.Text = "本月负债(万)";
+            label23.Text = "本月生活支出(万)";
             // 
             // numericUpDown_debt
             // 
@@ -1287,7 +1287,7 @@ namespace ThePool
             groupBox_debt.Size = new System.Drawing.Size(323, 195);
             groupBox_debt.TabIndex = 22;
             groupBox_debt.TabStop = false;
-            groupBox_debt.Text = "负债信息";
+            groupBox_debt.Text = "生活支出信息";
             // 
             // comboBox_daydebt
             // 
@@ -1388,7 +1388,7 @@ namespace ThePool
             button3.Name = "button3";
             button3.Size = new System.Drawing.Size(91, 25);
             button3.TabIndex = 12;
-            button3.Text = "保存负债信息";
+            button3.Text = "保存生活支出信息";
             button3.UseVisualStyleBackColor = true;
             // 
             // label20
@@ -1439,7 +1439,7 @@ namespace ThePool
             button_stopdebt.Name = "button_stopdebt";
             button_stopdebt.Size = new System.Drawing.Size(91, 25);
             button_stopdebt.TabIndex = 20;
-            button_stopdebt.Text = "终止负债";
+            button_stopdebt.Text = "终止生活支出";
             button_stopdebt.UseVisualStyleBackColor = true;
             // 
             // button_updatedebt
@@ -1457,7 +1457,7 @@ namespace ThePool
             button_newdebt.Name = "button_newdebt";
             button_newdebt.Size = new System.Drawing.Size(91, 25);
             button_newdebt.TabIndex = 19;
-            button_newdebt.Text = "新建负债";
+            button_newdebt.Text = "新建生活支出";
             button_newdebt.UseVisualStyleBackColor = true;
             // 
             // listBox_debt
@@ -1797,7 +1797,7 @@ namespace ThePool
                                 {
                                     payoutDGV.Rows.Add(debt.start.Day,
                                         debt.volume,
-                                        "负债 支出: \"" + debt.name + "\"");
+                                        "生活支出 支出: \"" + debt.name + "\"");
                                     payoutDGV.Rows[payoutDGV.Rows.Count - 2].ReadOnly = true;
                                 }
                             }
@@ -1868,7 +1868,7 @@ namespace ThePool
             if (tempDGV.SelectedRows[0].IsNewRow) return;
             if (tempDGV.SelectedRows[0].ReadOnly)
             {
-                MessageBox.Show("投资或负债资金流不可直接删除！请编辑投资负债信息！", "删除失败", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("投资或生活支出资金流不可直接删除！请编辑投资生活支出信息！", "删除失败", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
             tempDGV.Rows.Remove(tempDGV.SelectedRows[0]);
@@ -2082,7 +2082,7 @@ namespace ThePool
             {
                 if (debt.name == (gb.Controls["textBox_namedebt"] as TextBox).Text)
                 {
-                    if (DialogResult.Yes == MessageBox.Show("确认终止负债\"" + debt.name + "\"?", "终止负债", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
+                    if (DialogResult.Yes == MessageBox.Show("确认终止生活支出\"" + debt.name + "\"?", "终止生活支出", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
                     {
                         ar_Debts.Remove(debt);
                         DateTime curMonth = DateTime.Parse((gb.Parent.Parent.Parent as GroupBox).Text);
@@ -2092,18 +2092,18 @@ namespace ThePool
                         try
                         {
                             Xml.UpdateDebt(file_Debts, ar_Debts);
-                            MessageBox.Show("负债终止成功!", "终止负债", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            MessageBox.Show("生活支出终止成功!", "终止生活支出", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             Reload();
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show("负债终止失败!\n\n(" + ex.Message + ")", "终止负债", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show("生活支出终止失败!\n\n(" + ex.Message + ")", "终止生活支出", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                     return;
                 }
             }
-            MessageBox.Show("未找到负债\"" + (gb.Controls["textBox_namedebt"] as TextBox).Text + "\"!请从左侧列表中选取!", "停止项目", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("未找到生活支出\"" + (gb.Controls["textBox_namedebt"] as TextBox).Text + "\"!请从左侧列表中选取!", "停止项目", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private void button_updatedebt_Click(object sender, EventArgs e)
@@ -2118,13 +2118,13 @@ namespace ThePool
 
             if (name == "" || volume <= 0 || cycle == -1 || day == -1)
             {
-                MessageBox.Show("请输入完整负债信息!", "更新负债", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("请输入完整生活支出信息!", "更新生活支出", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             if (cycle == 0)
             {
-                MessageBox.Show("负债周期不可为\"不定期\"!", "更新负债", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("生活支出周期不可为\"不定期\"!", "更新生活支出", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -2132,7 +2132,7 @@ namespace ThePool
             {
                 if (d.name == name)
                 {
-                    if (DialogResult.Yes == MessageBox.Show("请确认更新负债: \"" + d.name + "\"\n\n注：更新的负债信息会影响此前的资金量计算，请谨慎操作\n\n建议: 若调整负债金额、周期、生效日，请中止当前负债并新建负债", "更新负债", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
+                    if (DialogResult.Yes == MessageBox.Show("请确认更新生活支出: \"" + d.name + "\"\n\n注：更新的生活支出信息会影响此前的资金量计算，请谨慎操作\n\n建议: 若调整生活支出金额、周期、生效日，请中止当前生活支出并新建生活支出", "更新生活支出", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
                     {
                         Debt debt = new Debt();
                         debt.name = name;
@@ -2148,19 +2148,19 @@ namespace ThePool
                         try
                         {
                             Xml.UpdateDebt(file_Debts, ar_Debts);
-                            MessageBox.Show("负债信息更新成功!", "更新负债", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            MessageBox.Show("生活支出信息更新成功!", "更新生活支出", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             Reload();
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show("负债信息更新失败!\n\n(" + ex.Message + ")", "更新负债", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show("生活支出信息更新失败!\n\n(" + ex.Message + ")", "更新生活支出", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                     return;
                 }
             }
 
-            if (DialogResult.Yes == MessageBox.Show("请确认保存新负债: \"" + name + "\"", "新建负债", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
+            if (DialogResult.Yes == MessageBox.Show("请确认保存新生活支出: \"" + name + "\"", "新建生活支出", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
             {
                 DateTime curMonth = DateTime.Parse((gb.Parent.Parent.Parent as GroupBox).Text);
 
@@ -2177,12 +2177,12 @@ namespace ThePool
                 try
                 {
                     Xml.UpdateDebt(file_Debts, ar_Debts);
-                    MessageBox.Show("负债信息保存成功!", "新建负债", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("生活支出信息保存成功!", "新建生活支出", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     Reload();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("负债信息保存失败!\n\n(" + ex.Message + ")", "新建负债", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("生活支出信息保存失败!\n\n(" + ex.Message + ")", "新建生活支出", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -2315,5 +2315,30 @@ namespace ThePool
             }
         }
         #endregion
+
+        private void button_reset_Click(object sender, EventArgs e)
+        {
+            if (DialogResult.OK == MessageBox.Show("请确认清空现有数据！", "", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning))
+            {
+                try
+                {
+                    ar_Calendars.Clear();
+                    ar_Debts.Clear();
+                    ar_Projects.Clear();
+                    ar_Partners.Clear();
+
+                    Xml.UpdateCalendar(file_Calendars, ar_Calendars);
+                    Xml.UpdateDebt(file_Debts, ar_Debts);
+                    Xml.UpdateProject(file_Projects, ar_Projects);
+                    Xml.UpdatePartner(file_Partners, ar_Partners);
+
+                    MessageBox.Show("数据已清空！", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch
+                { MessageBox.Show("数据清空出错！", "", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+                finally
+                { Reload(); }
+            }
+        }
     }
 }

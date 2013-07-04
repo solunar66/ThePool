@@ -244,7 +244,7 @@ namespace ThePool
                             Flow flow = new Flow();
                             flow.type = FlowType.payout;
                             flow.volume = debt.volume;
-                            flow.comment = "负债\"" + debt.name + "\"资金(" + debt.volume + "万)支出";
+                            flow.comment = "生活支出\"" + debt.name + "\"资金(" + debt.volume + "万)支出";
                             c.flows.Add(flow);
                             monthInfo.Add(c);
                         }
